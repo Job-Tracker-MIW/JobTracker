@@ -17,11 +17,10 @@ How To Run Frontend Only:
 
 How To Run Backend
 1. Navigate to root folder
-2. Execute 'flask run'
+2. Execute 'flask run' or 'python3 app.py'
 
 
-
-How To Compile and Run Entire app:
+How To Compile and Run Entire app (how app will run in production):
 1. Navigate to ./client folder
 2. Execute 'npm run build' (this will create a build folder with static files)
-3.
+3. Execute 'flask run' or 'python3 app.py' from root folder
