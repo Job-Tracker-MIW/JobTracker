@@ -10,6 +10,7 @@ Walkthrough for installing virtual env and Flask https://www.section.io/engineer
 5. Flask
 
 Note: Execute 'source env/bin/activate' before working with Flask to work in virtual env
+
 Note 2: make sure your virtual environment is in the root folder named 'env' so it is ignored by git
 
 How To Run Frontend Only:
