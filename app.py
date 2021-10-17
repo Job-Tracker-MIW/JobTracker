@@ -9,6 +9,28 @@ app = Flask(__name__, static_folder="client/build/static", template_folder="clie
 def root():
     return render_template('index.html')
 
+@app.route("/welcome_msg")
+def get_current_msg():
+        return {"msg": "Welcome folks"}
+
+
+@app.route("/table")
+def get_table():
+    return {"tableData": [
+                           { 'col1': 'Hello', 'col2': 'World',},
+                           { 'col1': 'react-table', 'col2': 'rocks',},
+                           { 'col1': 'whatever', 'col2': 'you want',},
+                         ]
+                         }
+
+
+            #{ 
+            #               'col1': ['Hello', 'react-table', 'whatever'],
+            #               'col2': ['World', 'rocks', 'you want']
+            #               }}
+
+
+
 print("Starting server")
 
 if __name__ == '__main__':
