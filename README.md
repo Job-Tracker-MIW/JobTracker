@@ -8,6 +8,11 @@ Install:
 4. Create a virtual environment for local development of Flask
 Walkthrough for installing virtual env and Flask https://www.section.io/engineering-education/complete-guide-on-installing-flask-for-beginners/
 5. Flask
+6. npm install react-route-dom
+7. npm install --save styled-components
+8. npm install react-icons --save
+9. npm install react-minimal-side-navigation
+
 
 Note: Execute 'source env/bin/activate' before working with Flask to work in virtual env
 

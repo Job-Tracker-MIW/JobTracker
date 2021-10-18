@@ -1,8 +1,18 @@
 import React, {useMemo, useState, useEffect } from 'react';
-import { useTable } from "react-table";
-
-import logo from './logo.svg';
+import { makeRenderer, useTable } from "react-table";
+//import logo from './logo.svg';
 import './App.css';
+
+import Sidebar from "./components/Sidebar";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import AppliedJobs from "./pages/AppliedJobs";
+import Companies from "./pages/Companies";
+// import { Companies, CompaniesOne, CompaniesTwo } from "./pages/Companies";
+import Contacts from "./pages/Contacts";
+import Skills from "./pages/Skills";
+import Login from "./pages/Login";
+
 
 function App() {
 
@@ -47,75 +57,98 @@ function App() {
         } = useTable({ columns, data });
 
 
-   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-
-        <p> {currentMsg}. </p>
-        <p>{JSON.stringify(data)}</p>
-
-     <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
-       <thead>
-         {headerGroups.map(headerGroup => (
-           <tr {...headerGroup.getHeaderGroupProps()}>
-             {headerGroup.headers.map(column => (
-               <th
-                 {...column.getHeaderProps()}
-                 style={{
-                   borderBottom: 'solid 3px red',
-                   background: 'aliceblue',
-                   color: 'black',
-                   fontWeight: 'bold',
-                 }}
-               >
-                 {column.render('Header')}
-               </th>
-             ))}
-           </tr>
-         ))}
-       </thead>
-       <tbody {...getTableBodyProps()}>
-         {rows.map(row => {
-           prepareRow(row)
-           return (
-             <tr {...row.getRowProps()}>
-               {row.cells.map(cell => {
-                 return (
-                   <td
-                     {...cell.getCellProps()}
-                     style={{
-                       padding: '10px',
-                       border: 'solid 1px gray',
-                       background: 'papayawhip',
-                     }}
-                   >
-                     {cell.render('Cell')}
-                   </td>
-                 )
-               })}
-             </tr>
-           )
-         })}
-       </tbody>
-     </table>
-
-	</header>
-    </div>
-
-
+  return (
+    <Router>
+      <Sidebar />
+      <Switch>
+        <Route path="/home" exact component={Home} />  
+        <Route path="/applied_jobs" exact component={AppliedJobs} />
+        <Route path="/contacts" exact component={Contacts} />
+        <Route path="/companies" exact component={Companies} />
+        {/* <Route path="/companies/companies1" exact component={CompaniesOne} />
+        <Route path="/companies/companies2" exact component={CompaniesTwo} /> */}
+        <Route path="/skills" exact component={Skills} />
+        <Route path="/login" exact component={Login} />
+      </Switch>
+    </Router>
   );
 }
 
 export default App;
+
+
+// Kept everything from below. Still need to figure out how to incorportate the table Matthew started. 
+    
+  
+//   );
+  //   <div className="App">
+  //     <header className="App-header">
+  //       <img src={logo} className="App-logo" alt="logo" />
+  //       <p>
+  //         Edit <code>src/App.js</code> and save to reload.
+  //       </p>
+  //       <a
+  //         className="App-link"
+  //         href="https://reactjs.org"
+  //         target="_blank"
+  //         rel="noopener noreferrer"
+  //       >
+  //         Learn React
+  //       </a>
+
+  //       <p> {currentMsg}. </p>
+  //       <p>{JSON.stringify(data)}</p>
+
+  //    <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
+  //      <thead>
+  //        {headerGroups.map(headerGroup => (
+  //          <tr {...headerGroup.getHeaderGroupProps()}>
+  //            {headerGroup.headers.map(column => (
+  //              <th
+  //                {...column.getHeaderProps()}
+  //                style={{
+  //                  borderBottom: 'solid 3px red',
+  //                  background: 'aliceblue',
+  //                  color: 'black',
+  //                  fontWeight: 'bold',
+  //                }}
+  //              >
+  //                {column.render('Header')}
+  //              </th>
+  //            ))}
+  //          </tr>
+  //        ))}
+  //      </thead>
+  //      <tbody {...getTableBodyProps()}>
+  //        {rows.map(row => {
+  //          prepareRow(row)
+  //          return (
+  //            <tr {...row.getRowProps()}>
+  //              {row.cells.map(cell => {
+  //                return (
+  //                  <td
+  //                    {...cell.getCellProps()}
+  //                    style={{
+  //                      padding: '10px',
+  //                      border: 'solid 1px gray',
+  //                      background: 'papayawhip',
+  //                    }}
+  //                  >
+  //                    {cell.render('Cell')}
+  //                  </td>
+  //                )
+  //              })}
+  //            </tr>
+  //          )
+  //        })}
+  //      </tbody>
+  //    </table>
+
+	// </header>
+  //   </div>
+
+
+  // );
+  //  }
+
+// export default App;

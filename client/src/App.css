@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.home,
+.applied_jobs,
+.contacts,
+.companies,
+.login,
+.skills {
+  display: flex;
+  margin-left: 260px;
+  font-size: 2rem;
+}
