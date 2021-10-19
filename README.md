@@ -56,11 +56,11 @@ Note 2: make sure your virtual environment is in the root folder named 'env' so 
 
 14.	Create a ‘.env’ file in the root of the project folder and add database credentials
 
-DB_HOST="localhost"
-DB_USER="root"
-DB_PASSWORD=""
-DB_DATABASE="bookswap" 
-DB_CREATE_SEED=True
+DB_HOST="localhost" </b>
+DB_USER="root" </b>
+DB_PASSWORD="" </b>
+DB_DATABASE="jobtracker" </b>
+DB_CREATE_SEED=True </b>
 
 15.	Make sure .env is in the .gitignore file so it isn’t pushed to our repo
 16.	Run app.py
