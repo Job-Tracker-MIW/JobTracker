@@ -49,11 +49,11 @@ Note 2: make sure your virtual environment is in the root folder named 'env' so 
 9.	Select DB: USE jobtracker
 10.	Show all tables in DB: show tables; (should show 0 for now)
 11.	Navigate to project folder in terminal or terminal in IDE with project open (Ex. VSCode)
-12.	Install MySQL: pip3 install mysql
+12.	Install MySQL: pip3 install mysql-connector
 13.	Install DotEnv: pip3 install dotenv 
 
     a.	This allows you to use environment variables to store local MySQL connection creds
-    
+
 14.	Create a ‘.env’ file in the root of the project folder and add database credentials
 
 DB_HOST="localhost"
