@@ -36,18 +36,35 @@ Note 2: make sure your virtual environment is in the root folder named 'env' so 
 # Install Python dependencies
 1. Execute "pip3 install -r requirements.txt" from root folder of project
 
-# Install and setup database
-1. Install MySQL Community Server https://dev.mysql.com/downloads/mysql/
-2. Connect with terminal: mysql -u root -p
-3. Create db: CREATE DATABASE jobtracker;
-4. Select DB: USE jobtracker;
-5. Create a ‘.env’ file in the root of the project folder and add the following:
+# Steps to get MySQL working and connected to application
+
+1.	Pull latest from Github
+2.	Install MySQL Community Server here: https://dev.mysql.com/downloads/mysql/
+3.	IMPORTANT: Set Authentication method to legacy during installation (do not choose default)
+4.	Set a default root password during install (save this password somewhere)
+5.	Open Terminal
+6.	Create shortcut: sudo sh -c 'echo /usr/local/mysql/bin > /etc/paths.d/mysql'
+7.	Connect: mysql -u root -p (Should show MySQL info if connected)
+8.	Create db: CREATE DATABASE jobtracker;
+9.	Select DB: USE jobtracker
+10.	Show all tables in DB: show tables; (should show 0 for now)
+11.	Navigate to project folder in terminal or terminal in IDE with project open (Ex. VSCode)
+12.	Install MySQL: pip3 install mysql
+13.	Install DotEnv: pip3 install dotenv 
+
+    a.	This allows you to use environment variables to store local MySQL connection creds
+    
+14.	Create a ‘.env’ file in the root of the project folder and add database credentials
 
 DB_HOST="localhost"
 DB_USER="root"
 DB_PASSWORD=""
 DB_DATABASE="bookswap" 
-DB_CREATE_SEED=False
+DB_CREATE_SEED=True
+
+15.	Make sure .env is in the .gitignore file so it isn’t pushed to our repo
+16.	Run app.py
+
 
 Note: DB_CREATE_SEED should be set to True if you want to recreate table and seed with dummy data
 
