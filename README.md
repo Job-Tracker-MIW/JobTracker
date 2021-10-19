@@ -1,7 +1,7 @@
 # JobTracker
 Job Tracker web application
 
-#Install:
+# Install:
 1. python3 (latest version)
 2. npm
 3. NodeJS
