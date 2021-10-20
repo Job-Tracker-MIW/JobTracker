@@ -46,7 +46,7 @@ if __name__ == '__main__':
         print("")
         print("Creating tables and seeing dummy data")
         print("")
-        db.main()
+        db.createAndSeedTables()
 
     # Will set port to 5000 on local machine, but allow Heroku to bind on deployment.
     port = int(os.environ.get('PORT', 80))
