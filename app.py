@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, jsonify, make_response
 import os
-
+import database.database_config as db
+from dotenv import load_dotenv
 from flask.helpers import send_file
+
+load_dotenv()
 
 app = Flask(__name__, static_folder="client/build/static", template_folder="client/build")
 
@@ -34,6 +37,13 @@ def get_table():
 print("Starting server")
 
 if __name__ == '__main__':
+    
+    if os.environ["DB_CREATE_SEED"] == "True" or os.environ["DB_CREATE_SEED"] == "true":
+        print("")
+        print("Creating tables and seeing dummy data")
+        print("")
+        db.main()
+
     # Will set port to 5000 on local machine, but allow Heroku to bind on deployment.
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
