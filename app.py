@@ -40,7 +40,7 @@ print("Starting server")
 
 if __name__ == '__main__':
     
-    if os.environ["DB_CREATE_SEED"] == "True" or os.environ["DB_CREATE_SEED"] == "true":
+    if os.environ["DB_CREATE_SEED"] == "True" or os.environ["DB_CREATE_SEED"] == "true" or os.environ["DB_CREATE_SEED"] == True:
         print("")
         print("Creating tables and seeing dummy data")
         print("")
