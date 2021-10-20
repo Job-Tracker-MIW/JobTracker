@@ -17,6 +17,10 @@ def get_current_msg():
         return {"msg": "Welcome folks"}
 
 
+@app.errorhandler(404)
+def not_found(e):
+    return app.send_static_file('index.html')
+
 @app.route("/table")
 def get_table():
     return {"tableData": [
@@ -45,5 +49,5 @@ if __name__ == '__main__':
         db.main()
 
     # Will set port to 5000 on local machine, but allow Heroku to bind on deployment.
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 80))
     app.run(host='0.0.0.0', port=port)
