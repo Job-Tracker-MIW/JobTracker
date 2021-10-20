@@ -16,11 +16,6 @@ def root():
 def get_current_msg():
         return {"msg": "Welcome folks"}
 
-
-@app.errorhandler(404)
-def not_found(e):
-    return app.send_static_file('index.html')
-
 @app.route("/table")
 def get_table():
     return {"tableData": [
@@ -36,6 +31,9 @@ def get_table():
             #               'col2': ['World', 'rocks', 'you want']
             #               }}
 
+@app.errorhandler(404)
+def not_found(e):
+    return app.send_static_file('index.html')
 
 
 print("Starting server")
