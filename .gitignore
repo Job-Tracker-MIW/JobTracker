@@ -1,2 +1,7 @@
 node_modules/
 __pycache__/
+env
+/.vscode
+.env
+/env
+node_modules/

@@ -16,9 +16,9 @@ def root():
 def get_current_msg():
         return {"msg": "Welcome folks"}
 
-
 @app.route("/appjobs")
 def get_jobtable():
+
     return {"tableData": [
         { 'title': 'Sr. Software Eng.', 'company': 'Intel', 'appdt': '09/01/21',},
         { 'title': 'Software Eng.', 'company': 'Amd', 'appdt': '09/10/21',},
@@ -79,18 +79,21 @@ def get_skilltable():
         ],
       }
 
+@app.errorhandler(404)
+def not_found(e):
+    return app.send_static_file('index.html')
 
 
 print("Starting server")
 
 if __name__ == '__main__':
     
-#    if os.environ["DB_CREATE_SEED"] == "True" or os.environ["DB_CREATE_SEED"] == "true":
-#        print("")
-#        print("Creating tables and seeing dummy data")
-#        print("")
-#        db.main()
+    if os.environ["DB_CREATE_SEED"] == "True" or os.environ["DB_CREATE_SEED"] == "true" or os.environ["DB_CREATE_SEED"] == True:
+        print("")
+        print("Creating tables and seeing dummy data")
+        print("")
+        db.createAndSeedTables()
 
     # Will set port to 5000 on local machine, but allow Heroku to bind on deployment.
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 80))
     app.run(host='0.0.0.0', port=port)

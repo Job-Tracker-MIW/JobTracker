@@ -5,14 +5,16 @@ import datetime
 
 load_dotenv()
 
-mydb = mysql.connector.connect(
-  host=os.environ["DB_HOST"],
-  user=os.environ["DB_USER"],
-  password=os.environ["DB_PASSWORD"],
-  database=os.environ["DB_DATABASE"]
-)
+# Get the environment variables where sensitive logon information securely stored
+config = {
+    'user': os.environ.get('DB_USER'),
+    'password': os.environ.get('DB_PASSWORD'),
+    'host': os.environ.get('DB_HOST'),
+    'database': os.environ.get('DB_DATABASE')
+    }
 
-def createTables():
+def createAndSeedTables():
+    mydb = mysql.connector.connect(**config)
     mycursor = mydb.cursor()
 
     # drop tables
@@ -50,8 +52,6 @@ def createTables():
     mydb.commit()
     mycursor.close()
 
-
-def seedTables():
     mycursor = mydb.cursor()
 
     # seed tables with dummy data
@@ -81,8 +81,7 @@ def seedTables():
 
 
 def main():
-    createTables()
-    seedTables()
+    createAndSeedTables()
 
 if __name__ == "__main__":
     main()
