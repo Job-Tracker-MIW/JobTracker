@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, jsonify, make_response
 import os
-#import database.database_config as db
-#from dotenv import load_dotenv
+import database.database_config as db
+from dotenv import load_dotenv
 from flask.helpers import send_file
 
-#load_dotenv()
+load_dotenv()
 
 app = Flask(__name__, static_folder="client/build/static", template_folder="client/build")
 
@@ -97,3 +97,4 @@ if __name__ == '__main__':
     # Will set port to 5000 on local machine, but allow Heroku to bind on deployment.
     port = int(os.environ.get('PORT', 80))
     app.run(host='0.0.0.0', port=port)
+    # app.run(host='0.0.0.0', port=8766) ## <-- leave this for Isaac for the time-being
