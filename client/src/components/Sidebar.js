@@ -94,7 +94,7 @@ const Sidebar = () => {
                      marginRight: "auto",
                      color: "white" }}
           >
-            Job Tracker
+            JOB TRACKER
           </h1>
 
             <NavBtn>
