@@ -1,6 +1,6 @@
 import React, {useMemo, useState, useEffect } from 'react';
 import { makeRenderer, useTable } from "react-table";
-import '../tableCSS.css';
+import '../styles/tableCSS.css';
 
 const Companies = () => {
   const [tableData, setTableData] = useState([]);
@@ -22,9 +22,6 @@ const Companies = () => {
              rows,
              prepareRow
         } = useTable({ columns, data });
-
-
-
 
   return (
 

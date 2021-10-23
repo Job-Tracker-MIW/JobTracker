@@ -1,0 +1,42 @@
+@media all and (min-width: 480px) {
+    .Login {
+      padding: 60px 0;
+    }
+  
+    .Login form {
+      margin: 0 auto;
+      max-width: 320px;
+    }
+  }
+
+    .h1 {
+    text-align:center;
+    padding: 100px 15px 15px 15px;
+}
+
+    .form-center {
+	display:flex;
+	justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px 15px 5px 15px;
+
+   
+}
+    .form-group {
+    text-align: center;
+    padding: 5px 15px 5px 15px;
+}
+
+    .box {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background:#f9f9f9;
+    border:18px solid #1e90ff;
+}

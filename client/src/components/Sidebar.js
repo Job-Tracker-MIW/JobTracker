@@ -6,13 +6,14 @@ import * as AiIcons from "react-icons/ai";
 import { SidebarData } from "./SidebarData";
 import SubMenu from "./SubMenu";
 import { IconContext } from "react-icons/lib";
-  
+import "../styles/header.css";
+
 // Navbar Properties
 const Nav = styled.div`
   background: #15171c;
   height: 80px;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 `;
   
@@ -21,13 +22,13 @@ const NavIcon = styled(Link)`
   font-size: 2rem;
   height: 80px;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 `;
   
 // Sidebar properties
 const SidebarNav = styled.nav`
-  background: #1e90ff;  
+  background: #1e90ff;
   width: 250px;
   height: 100vh;
   display: flex;
@@ -82,38 +83,40 @@ const Sidebar = () => {
 
 
   return (
-    <>
-      <IconContext.Provider value={{ color: "#fff" }}>
-        <Nav>
+     
+      <><h1 class = "h1-center"> JOB TRACKER </h1><IconContext.Provider value={{ color: "#fff" }}>
+      <Nav>
+        <NavIcon to="#">
+          <FaIcons.FaBars onClick={showSidebar} />
+        </NavIcon>
+        <h1
+          style={{
+            textAlign: "center",
+            marginLeft: "auto",
+            marginRight: "auto",
+            color: "white"
+          }}>
+        </h1>
+
+
+        <NavBtn>
+          <NavBtnLink to='./login'>Log In</NavBtnLink>
+        </NavBtn>
+      </Nav>
+
+      <SidebarNav sidebar={sidebar}>
+        <SidebarWrap>
           <NavIcon to="#">
-            <FaIcons.FaBars onClick={showSidebar} />
+            <AiIcons.AiOutlineClose onClick={showSidebar} />
           </NavIcon>
-          <h1
-            style={{ textAlign: "center", 
-                     marginLeft: "auto", 
-                     marginRight: "auto",
-                     color: "white" }}
-          >
-            JOB TRACKER
-          </h1>
+          {SidebarData.map((item, index) => {
+            return <SubMenu item={item} key={index} />;
+          })}
+        </SidebarWrap>
+      </SidebarNav>
 
-            <NavBtn>
-                <NavBtnLink to='./login'>Log In</NavBtnLink>
-            </NavBtn>
-        </Nav>
-
-        <SidebarNav sidebar={sidebar}>
-          <SidebarWrap>
-            <NavIcon to="#">
-              <AiIcons.AiOutlineClose onClick={showSidebar} />
-            </NavIcon>
-            {SidebarData.map((item, index) => {
-              return <SubMenu item={item} key={index} />;
-            })}
-          </SidebarWrap>
-        </SidebarNav>
-      </IconContext.Provider>
-    </>
+    </IconContext.Provider></>
+   
   );
 };
   

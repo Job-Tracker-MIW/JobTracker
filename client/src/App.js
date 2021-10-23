@@ -1,24 +1,21 @@
 import React, {useMemo, useState, useEffect } from 'react';
 import { makeRenderer, useTable } from "react-table";
-//import logo from './logo.svg';
-import './App.css';
-
 import Sidebar from "./components/Sidebar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Home from "./pages/Home";
 import AppliedJobs from "./pages/AppliedJobs";
 import Companies from "./pages/Companies";
 // import { Companies, CompaniesOne, CompaniesTwo } from "./pages/Companies";
 import Contacts from "./pages/Contacts";
 import Skills from "./pages/Skills";
 import Login from "./pages/Login";
+import './App.css';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 
 function App() {
 
   const [currentMsg, setCurrentMsg] = useState(0);
-  const [tableData, setTableData] = useState([]); 
-
+  const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
 	       fetch('/welcome_msg').then(res => res.json()).then(data => {
@@ -26,11 +23,13 @@ function App() {
 		            });
 	    }, []);
 
-  useEffect(() => {
-	       fetch('/table').then(res => res.json()).then(data => {
-		               setTableData( data.tableData );
-		            });
-	    }, []);
+  // FOR SOME REASON THE BELOW WAS BRINGING UP A LOG ERROR...
+
+  // useEffect(() => {
+	//        fetch('/table').then(res => res.json()).then(data => {
+	// 	               setTableData( data.tableData );
+	// 	            });
+	//     }, []);
    
   const data = React.useMemo(() => tableData, [tableData]);
 
@@ -61,16 +60,14 @@ function App() {
     <Router>
       <Sidebar />
       <Switch>
-        <Route path="/home" exact component={Home} />  
+        <Route path="/" exact component={Login} /> {/* the home page */}
         <Route path="/applied_jobs" exact component={AppliedJobs} />
         <Route path="/contacts" exact component={Contacts} />
         <Route path="/companies" exact component={Companies} />
-        {/* <Route path="/companies/companies1" exact component={CompaniesOne} />
-        <Route path="/companies/companies2" exact component={CompaniesTwo} /> */}
         <Route path="/skills" exact component={Skills} />
         <Route path="/login" exact component={Login} />
       </Switch>
-    </Router>
+  </Router>
   );
 }
 
