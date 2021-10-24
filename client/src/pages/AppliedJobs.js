@@ -1,8 +1,6 @@
-//import React from "react";
-
 import React, {useMemo, useState, useEffect } from 'react';
 import { makeRenderer, useTable } from "react-table";
-import '../tableCSS.css';
+import '../styles/tableCSS.css';
 
 
 const AppliedJobs = () => {

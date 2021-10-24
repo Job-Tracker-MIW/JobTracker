@@ -13,7 +13,8 @@ Walkthrough for installing virtual env and Flask https://www.section.io/engineer
 8. npm install react-icons --save
 9. npm install react-minimal-side-navigation
 10. Might need to 'pip3 install dotenv' and 'pip3 install mysql-connector'
-
+    - If having issues, use pip3 install python-dotenv instead
+11. npm install react-bootstrap bootstrap@5.1.3
 
 Note: Execute 'source env/bin/activate' before working with Flask to work in virtual env
 
