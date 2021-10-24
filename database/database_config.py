@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import datetime
 
+
 load_dotenv()
 
 # Get the environment variables where sensitive logon information securely stored
@@ -78,6 +79,36 @@ def createAndSeedTables():
     mydb.commit()
     mycursor.close()
     mydb.close()
+
+
+def getTableApplications(userid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    sql = "SELECT b.title AS title, b.company AS company, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
+          "a.userid = b.userid AND a.jobid = b.jobid WHERE a.userid = %s"
+    
+    cur.execute(sql, (userid,))
+
+    vals = cur.fetchall()
+
+    mydb.close()
+    return(vals)
+
+def getTableContacts(userid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    sql = "SELECT b.title AS title, b.company AS company, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
+          "a.userid = b.userid AND a.jobid = b.jobid WHERE a.userid = %s"
+    
+    cur.execute(sql, (userid,))
+
+    vals = cur.fetchall()
+
+    mydb.close()
+    return(vals)
+
 
 
 def main():
