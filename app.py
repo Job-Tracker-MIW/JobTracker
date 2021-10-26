@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from flask.helpers import send_file
 from flask import send_from_directory 
 
+standup_db = True
+
 load_dotenv()
 
 app = Flask(__name__, static_folder="client/build/static", template_folder="client/build")
@@ -82,7 +84,7 @@ print("Starting server")
 
 if __name__ == '__main__':
     
-    if os.environ["DB_CREATE_SEED"] == "True" or os.environ["DB_CREATE_SEED"] == "true" or os.environ["DB_CREATE_SEED"] == True:
+    if standup_db == True:
         print("")
         print("Creating tables and seeing dummy data")
         print("")
