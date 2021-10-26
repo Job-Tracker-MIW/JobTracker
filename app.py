@@ -6,7 +6,7 @@ from flask.helpers import send_file
 from flask import send_from_directory 
 
 # flag for standing up database locally
-standup_db = False
+standup_db = True
 
 load_dotenv()
 

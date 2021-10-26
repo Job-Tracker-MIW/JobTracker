@@ -16,51 +16,51 @@ config = {
 
 def createAndSeedTables():
     mydb = mysql.connector.connect(**config)
-    mycursor = mydb.cursor()
+    # mycursor = mydb.cursor()
 
-    # drop tables
+    # # drop tables
 
 
-    mycursor.execute("DROP TABLE IF EXISTS JobsSkills")
-    mycursor.execute("DROP TABLE IF EXISTS Applications")
-    mycursor.execute("DROP TABLE IF EXISTS Skills")
-    mycursor.execute("DROP TABLE IF EXISTS Jobs")
-    mycursor.execute("DROP TABLE IF EXISTS Contacts")
-    mycursor.execute("DROP TABLE IF EXISTS Users")
-    mycursor.execute("DROP TABLE IF EXISTS Companies")
+    # mycursor.execute("DROP TABLE IF EXISTS JobsSkills")
+    # mycursor.execute("DROP TABLE IF EXISTS Applications")
+    # mycursor.execute("DROP TABLE IF EXISTS Skills")
+    # mycursor.execute("DROP TABLE IF EXISTS Jobs")
+    # mycursor.execute("DROP TABLE IF EXISTS Contacts")
+    # mycursor.execute("DROP TABLE IF EXISTS Users")
+    # mycursor.execute("DROP TABLE IF EXISTS Companies")
 
-    # create tables
-    sql = "CREATE TABLE Users (userid INT AUTO_INCREMENT PRIMARY KEY,\
-    username VARCHAR(50) NOT NULL, password VARCHAR(25) NOT NULL, email VARCHAR(50) NOT NULL)"
-    mycursor.execute(sql)
+    # # create tables
+    # sql = "CREATE TABLE Users (userid INT AUTO_INCREMENT PRIMARY KEY,\
+    # username VARCHAR(50) NOT NULL, password VARCHAR(25) NOT NULL, email VARCHAR(50) NOT NULL)"
+    # mycursor.execute(sql)
 
-    sql = "CREATE TABLE Companies (companyid INT AUTO_INCREMENT PRIMARY KEY, company VARCHAR(50) NOT NULL)"
-    mycursor.execute(sql)
+    # sql = "CREATE TABLE Companies (companyid INT AUTO_INCREMENT PRIMARY KEY, company VARCHAR(50) NOT NULL)"
+    # mycursor.execute(sql)
 
-    sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
-    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, companyid INT NOT NULL,\
-    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid))"
-    mycursor.execute(sql)
+    # sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
+    # userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, companyid INT NOT NULL,\
+    # FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid))"
+    # mycursor.execute(sql)
 
-    sql = "CREATE TABLE Applications (appid INT AUTO_INCREMENT PRIMARY KEY,\
-    jobid INT NOT NULL, userid INT NOT NULL, name VARCHAR(50) NOT NULL, status VARCHAR(50) NOT NULL, application_date DATE NOT NULL,\
-    FOREIGN KEY(jobid) REFERENCES Jobs(jobid), FOREIGN KEY(userid) REFERENCES Users(userid))"
-    mycursor.execute(sql)
+    # sql = "CREATE TABLE Applications (appid INT AUTO_INCREMENT PRIMARY KEY,\
+    # jobid INT NOT NULL, userid INT NOT NULL, name VARCHAR(50) NOT NULL, status VARCHAR(50) NOT NULL, application_date DATE NOT NULL,\
+    # FOREIGN KEY(jobid) REFERENCES Jobs(jobid), FOREIGN KEY(userid) REFERENCES Users(userid))"
+    # mycursor.execute(sql)
 
-    sql = "CREATE TABLE Skills (skillid INT AUTO_INCREMENT PRIMARY KEY,\
-    userid INT NOT NULL, name VARCHAR(50) NOT NULL, proficiency VARCHAR(25) NOT NULL,\
-    FOREIGN KEY(userid) REFERENCES Users(userid))"
-    mycursor.execute(sql)
+    # sql = "CREATE TABLE Skills (skillid INT AUTO_INCREMENT PRIMARY KEY,\
+    # userid INT NOT NULL, name VARCHAR(50) NOT NULL, proficiency VARCHAR(25) NOT NULL,\
+    # FOREIGN KEY(userid) REFERENCES Users(userid))"
+    # mycursor.execute(sql)
 
-    sql = "CREATE TABLE JobsSkills (id INT AUTO_INCREMENT PRIMARY KEY,\
-    skillid INT NOT NULL, jobid INT NOT NULL, FOREIGN KEY(skillid) REFERENCES Skills(skillid),\
-    FOREIGN KEY(jobid) REFERENCES Jobs(jobid))"
-    mycursor.execute(sql)
+    # sql = "CREATE TABLE JobsSkills (id INT AUTO_INCREMENT PRIMARY KEY,\
+    # skillid INT NOT NULL, jobid INT NOT NULL, FOREIGN KEY(skillid) REFERENCES Skills(skillid),\
+    # FOREIGN KEY(jobid) REFERENCES Jobs(jobid))"
+    # mycursor.execute(sql)
 
-    sql = "CREATE TABLE Contacts (contactid INT AUTO_INCREMENT PRIMARY KEY,\
-    userid INT NOT NULL, name VARCHAR(50), companyid INT, email VARCHAR(50), phone VARCHAR(15),\
-    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid))"
-    mycursor.execute(sql)
+    # sql = "CREATE TABLE Contacts (contactid INT AUTO_INCREMENT PRIMARY KEY,\
+    # userid INT NOT NULL, name VARCHAR(50), companyid INT, email VARCHAR(50), phone VARCHAR(15),\
+    # FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid))"
+    # mycursor.execute(sql)
 
 
 
