@@ -126,9 +126,8 @@ DB_CREATE_SEED=True
 # Install Python dependencies
 1. Execute "pip3 install -r requirements.txt" from root folder of project
 
-# Access Heroku console remotely
-heroku login
-heroku ps:exec -a job-tracker-matt-isaac-wil
-
+# Run Database standup script on Heroku
+1. heroku login
+2. heroku run python database/database_config.py -a job-tracker-matt-isaac-wil
 
 

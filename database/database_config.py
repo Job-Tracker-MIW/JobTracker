@@ -74,9 +74,14 @@ def createAndSeedTables():
     val = ("someuser", 12345, "someuser@test.com")
     mycursor.execute(sql, val)
 
-    # sql = "INSERT INTO Companies (company) VALUES (%s)"
-    # val = ("FAANGERMMAIGAWD",)
-    # mycursor.execute(sql, val)
+    sql = "INSERT INTO Companies (company) VALUES (%s)"
+    val = ("FAANGERMMAIGAWD",)
+    mycursor.execute(sql, val)
+
+    sql = "select userid from users"
+    mycursor.execute(sql)
+    val = mycursor.fetchall()
+    print(val)
 
     # sql = "INSERT INTO Skills (userid, name, proficiency) VALUES (%s, %s, %s)"
     # val = (1, "Javascript", "2")
