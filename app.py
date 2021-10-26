@@ -83,13 +83,15 @@ def not_found(e):
 
 print("Starting server")
 
-if standup_db:
-    print("")
-    print("Creating tables and seeding dummy data")
-    print("")
-    db.createAndSeedTables()
+if __name__ == '__main__':
+    
+    if standup_db:
+        print("")
+        print("Creating tables and seeding dummy data")
+        print("")
+        db.createAndSeedTables()
 
-# Will set port to 5000 on local machine, but allow Heroku to bind on deployment.
-port = int(os.environ.get('PORT', 80))
-# app.run(host='0.0.0.0', port=port)
-app.run(host='0.0.0.0', port=8766) ## <-- leave this for Isaac for the time-being
+    # Will set port to 5000 on local machine, but allow Heroku to bind on deployment.
+    port = int(os.environ.get('PORT', 80))
+    # app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=8766) ## <-- leave this for Isaac for the time-being
