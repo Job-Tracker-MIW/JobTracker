@@ -74,29 +74,29 @@ def createAndSeedTables():
     val = ("someuser", 12345, "someuser@test.com")
     mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Companies (company) VALUES (%s)"
-    val = ("FAANGERMMAIGAWD",)
-    mycursor.execute(sql, val)
+    # sql = "INSERT INTO Companies (company) VALUES (%s)"
+    # val = ("FAANGERMMAIGAWD",)
+    # mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Skills (userid, name, proficiency) VALUES (%s, %s, %s)"
-    val = (1, "Javascript", "2")
-    mycursor.execute(sql, val)
+    # sql = "INSERT INTO Skills (userid, name, proficiency) VALUES (%s, %s, %s)"
+    # val = (1, "Javascript", "2")
+    # mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-    val = (1, "Hope I get it", "Software Engineer I", 1)
-    mycursor.execute(sql, val)
+    # sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
+    # val = (1, "Hope I get it", "Software Engineer I", 1)
+    # mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
-    val = (1, 1, "First Application", "Applied", datetime.date(2021,10,1))
-    mycursor.execute(sql, val)
+    # sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
+    # val = (1, 1, "First Application", "Applied", datetime.date(2021,10,1))
+    # mycursor.execute(sql, val)
 
-    sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
-    val = (1, 1)
-    mycursor.execute(sql, val)
+    # sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
+    # val = (1, 1)
+    # mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
-    val = (1, 'John Doe', 1, 'jdoe@gfaangermaigawd.com', '555-555-5555')
-    mycursor.execute(sql, val)
+    # sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
+    # val = (1, 'John Doe', 1, 'jdoe@gfaangermaigawd.com', '555-555-5555')
+    # mycursor.execute(sql, val)
 
 
     mydb.commit()
