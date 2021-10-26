@@ -29,7 +29,7 @@ def get_current_msg():
 @app.route("/appjobs")
 def get_jobtable():
 
-    val =  db.getTableApplications(userid="1")
+    val =  db.getTableApplications(userid="5")
 
     return {"tableData": 
         val,
@@ -43,7 +43,7 @@ def get_jobtable():
 @app.route("/contacts")
 def get_conttable():
     
-    val =  db.getTableContacts(userid="1")
+    val =  db.getTableContacts(userid="5")
     print(val)
 
     return {"tableData": val,
@@ -56,7 +56,7 @@ def get_conttable():
 
 @app.route("/companies")
 def get_comptable():
-    val =  db.getTableContacts(userid="1")
+    val =  db.getTableContacts(userid="5")
     return {"tableData": val, 
       "tableColumns":  [
           {'Header': 'Company', 'accessor': "company"},
