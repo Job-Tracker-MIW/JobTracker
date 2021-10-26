@@ -19,20 +19,27 @@ def createAndSeedTables():
     mycursor = mydb.cursor()
 
     # drop tables
+
+
     mycursor.execute("DROP TABLE IF EXISTS JobsSkills")
     mycursor.execute("DROP TABLE IF EXISTS Applications")
     mycursor.execute("DROP TABLE IF EXISTS Skills")
     mycursor.execute("DROP TABLE IF EXISTS Jobs")
+    mycursor.execute("DROP TABLE IF EXISTS Contacts")
     mycursor.execute("DROP TABLE IF EXISTS Users")
+    mycursor.execute("DROP TABLE IF EXISTS Companies")
 
     # create tables
     sql = "CREATE TABLE Users (userid INT AUTO_INCREMENT PRIMARY KEY,\
     username VARCHAR(50) NOT NULL, password VARCHAR(25) NOT NULL, email VARCHAR(50) NOT NULL)"
     mycursor.execute(sql)
 
+    sql = "CREATE TABLE Companies (companyid INT AUTO_INCREMENT PRIMARY KEY, company VARCHAR(50) NOT NULL)"
+    mycursor.execute(sql)
+
     sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
-    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, company VARCHAR(50) NOT NULL,\
-    FOREIGN KEY(userid) REFERENCES Users(userid))"
+    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, companyid INT NOT NULL,\
+    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid))"
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Applications (appid INT AUTO_INCREMENT PRIMARY KEY,\
@@ -50,6 +57,13 @@ def createAndSeedTables():
     FOREIGN KEY(jobid) REFERENCES Jobs(jobid))"
     mycursor.execute(sql)
 
+    sql = "CREATE TABLE Contacts (contactid INT AUTO_INCREMENT PRIMARY KEY,\
+    userid INT NOT NULL, name VARCHAR(50), companyid INT, email VARCHAR(50), phone VARCHAR(15),\
+    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid))"
+    mycursor.execute(sql)
+
+
+
     mydb.commit()
     mycursor.close()
 
@@ -60,12 +74,16 @@ def createAndSeedTables():
     val = ("someuser", 12345, "someuser@test.com")
     mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Skills (userid, name, proficiency) VALUES (%s, %s, %s)"
-    val = (1, "Javascript", "Not Great")
+    sql = "INSERT INTO Companies (company) VALUES (%s)"
+    val = ("FAANGERMMAIGAWD",)
     mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Jobs (userid, name, title, company) VALUES (%s, %s, %s, %s)"
-    val = (1, "Hope I get it", "Software Engineer I", "FAANGERMMAIGAWD")
+    sql = "INSERT INTO Skills (userid, name, proficiency) VALUES (%s, %s, %s)"
+    val = (1, "Javascript", "2")
+    mycursor.execute(sql, val)
+
+    sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
+    val = (1, "Hope I get it", "Software Engineer I", 1)
     mycursor.execute(sql, val)
 
     sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
@@ -76,6 +94,11 @@ def createAndSeedTables():
     val = (1, 1)
     mycursor.execute(sql, val)
 
+    sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
+    val = (1, 'John Doe', 1, 'jdoe@gfaangermaigawd.com', '555-555-5555')
+    mycursor.execute(sql, val)
+
+
     mydb.commit()
     mycursor.close()
     mydb.close()
@@ -85,8 +108,8 @@ def getTableApplications(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "SELECT b.title AS title, b.company AS company, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
-          "a.userid = b.userid AND a.jobid = b.jobid WHERE a.userid = %s"
+    sql = "SELECT b.title AS title, c.company AS company, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
+          "a.userid = b.userid AND a.jobid = b.jobid LEFT JOIN Companies c on b.companyid = c.companyid WHERE a.userid = %s"
     
     cur.execute(sql, (userid,))
 
@@ -94,20 +117,37 @@ def getTableApplications(userid):
 
     mydb.close()
     return(vals)
+
 
 def getTableContacts(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "SELECT b.title AS title, b.company AS company, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
-          "a.userid = b.userid AND a.jobid = b.jobid WHERE a.userid = %s"
-    
+    sql = "SELECT b.company, a.name as contact, c.jobCount FROM Contacts a LEFT JOIN Companies b ON a.companyid = b.companyid " +\
+          "LEFT JOIN (SELECT count(*) as jobcount, companyid, userid FROM Jobs GROUP BY companyid, userid) c " +\
+          "ON a.companyid = c.companyid and a.userid = c.userid WHERE a.userid = %s " 
+
     cur.execute(sql, (userid,))
 
     vals = cur.fetchall()
 
     mydb.close()
     return(vals)
+
+def getTableSkills(userid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    sql = "select a.name as skill, a.proficiency as pro, b.jobMatch FROM Skills a LEFT JOIN " +\
+          "(SELECT count(*) as jobMatch, skillid from JobsSkills GROUP BY skillid ) b ON a.skillid = b.skillid WHERE a.userid = %s"
+
+    cur.execute(sql, (userid,))
+
+    vals = cur.fetchall()
+
+    mydb.close()
+    return(vals)
+
 
 
 

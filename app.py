@@ -43,48 +43,33 @@ def get_conttable():
     val =  db.getTableContacts(userid="1")
     print(val)
 
-    return {"tableData": [
-        { 'contact': 'Helen Smith', 'companies': 'Intel', 'match': '5',},
-        { 'contact': 'Mark Wright', 'companies': 'Amd', 'match': '3',},
-        { 'contact': 'James Jeff', 'companies': 'Amazon', 'match': '1',},
-      ],
+    return {"tableData": val,
       "tableColumns":  [
         {'Header': 'Contact', 'accessor': 'contact'},
-        {'Header': 'Companies', 'accessor': "companies"},
-        {'Header': "Job Matches",'accessor': "match"}
+        {'Header': 'Companies', 'accessor': "company"},
+        {'Header': "Job Matches",'accessor': "jobCount"}
         ],
       }
 
 @app.route("/companies")
 def get_comptable():
-    return {"tableData": [
-        {'company':'AMD', 'contact':'Mark Watson', 'match':'5',},
-        {'company':'Intel', 'contact':'Helen Smith', 'match':'3',},
-        {'company':'Microsoft', 'contact':'Helen Smith', 'match':'1',},
-        {'company':'Amazon', 'contact':'James Jeff', 'match':'1',},
-
-      ],
+    val =  db.getTableContacts(userid="1")
+    return {"tableData": val, 
       "tableColumns":  [
           {'Header': 'Company', 'accessor': "company"},
           {'Header': 'Contacts', 'accessor': 'contact'},
-          {'Header': "Job Matches",'accessor': "match"}
+          {'Header': "Job Matches",'accessor': "jobCount"}
         ],
       }
 
 @app.route("/skills")
 def get_skilltable():
-    return {"tableData": [
-        {'skill':'Java', 'pro':'8', 'match':'5',},
-        {'skill':'Python', 'pro':'7', 'match':'3',},
-        {'skill':'MySQL', 'pro':'8', 'match':'1',},
-        {'skill':'C/C++', 'pro':'6', 'match':'1',},
-        {'skill':'AWS', 'pro':'7', 'match':'3',},
-        {'skill':'Angular', 'pro':'2', 'match':'4',},
-      ],
+    val =  db.getTableSkills(userid="1")
+    return {"tableData": val,
       "tableColumns":  [
           {'Header': 'Skill', 'accessor': "skill"},
           {'Header': 'Proficiency (1-10)', 'accessor': 'pro'},
-          {'Header': "Job Matches",'accessor': "match"}
+          {'Header': "Job Matches",'accessor': "jobMatch"}
         ],
       }
 
