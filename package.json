@@ -3,7 +3,10 @@
     "client/node_modules"
   ],
   "scripts": {
-    "heroku-postbuild": "cd client && npm install && npm run build && cd .."
+    "heroku-postbuild": "cd client && npm install && npm run build && cd ..",
+    "compile": [
+      "chmod a+x database/database_config.py"
+    ]
   },
   "dependencies": {
     "bootstrap": "^5.1.3",
