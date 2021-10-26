@@ -26,13 +26,11 @@ def get_current_msg():
 @app.route("/appjobs")
 def get_jobtable():
 
-    return {"tableData": [
-        { 'title': 'Sr. Software Eng.', 'company': 'Intel', 'appdt': '09/01/21',},
-        { 'title': 'Software Eng.', 'company': 'Amd', 'appdt': '09/10/21',},
-        { 'title': 'Jr. Software Eng.', 'company': 'Microsoft', 'appdt': '09/05/21',},
-        { 'title': 'Software Eng.', 'company': 'Amazon', 'appdt': '08/20/21',},
-      ],
-      "tableColumns":  [
+    val =  db.getTableApplications(userid="1")
+
+    return {"tableData": 
+        val,
+            "tableColumns":  [
         {'Header': 'Title', 'accessor': 'title'},
         {'Header': 'Company', 'accessor': "company"},
         {'Header': "Application Date",'accessor': "appdt"}
@@ -41,6 +39,10 @@ def get_jobtable():
 
 @app.route("/contacts")
 def get_conttable():
+    
+    val =  db.getTableContacts(userid="1")
+    print(val)
+
     return {"tableData": [
         { 'contact': 'Helen Smith', 'companies': 'Intel', 'match': '5',},
         { 'contact': 'Mark Wright', 'companies': 'Amd', 'match': '3',},
