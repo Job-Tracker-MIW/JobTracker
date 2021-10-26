@@ -64,8 +64,8 @@ def createAndSeedTables():
 
 
 
-    mydb.commit()
-    mycursor.close()
+    # mydb.commit()
+    # mycursor.close()
 
     mycursor = mydb.cursor()
 
