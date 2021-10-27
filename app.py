@@ -29,7 +29,8 @@ def get_current_msg():
 @app.route("/appjobs")
 def get_jobtable():
 
-    val =  db.getTableApplications(userid="5")
+    userid = db.getUserForMock()
+    val =  db.getTableApplications(userid)
 
     return {"tableData": 
         val,
@@ -43,7 +44,8 @@ def get_jobtable():
 @app.route("/contacts")
 def get_conttable():
     
-    val =  db.getTableContacts(userid="5")
+    userid = db.getUserForMock()
+    val =  db.getTableContacts(userid)
     print(val)
 
     return {"tableData": val,
@@ -56,7 +58,9 @@ def get_conttable():
 
 @app.route("/companies")
 def get_comptable():
-    val =  db.getTableContacts(userid="5")
+
+    userid = db.getUserForMock()
+    val =  db.getTableContacts(userid)
     return {"tableData": val, 
       "tableColumns":  [
           {'Header': 'Company', 'accessor': "company"},
@@ -67,7 +71,9 @@ def get_comptable():
 
 @app.route("/skills")
 def get_skilltable():
-    val =  db.getTableSkills(userid="1")
+
+    userid = db.getUserForMock()
+    val =  db.getTableSkills(userid)
     return {"tableData": val,
       "tableColumns":  [
           {'Header': 'Skill', 'accessor': "skill"},

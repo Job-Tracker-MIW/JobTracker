@@ -168,8 +168,17 @@ def getTableSkills(userid):
     mydb.close()
     return(vals)
 
+def getUserForMock():
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
 
+    sql = "select userid from users"
+    cur.execute(sql)
+    val = cur.fetchone()
+    userid = int(val['userid'])
 
+    mydb.close()
+    return userid
 
 def main():
     createAndSeedTables()
