@@ -1,5 +1,4 @@
-import React, {useMemo, useState, useEffect, Component } from 'react';
-import { makeRenderer, useTable } from "react-table";
+import React, { } from 'react';
 import '../../styles/tableCSS.css';
 import SkillRow from './SkillRow';
 import './skills.css'
