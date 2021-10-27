@@ -6,7 +6,7 @@ import AppliedJobs from "./pages/AppliedJobs";
 import Companies from "./pages/Companies";
 // import { Companies, CompaniesOne, CompaniesTwo } from "./pages/Companies";
 import Contacts from "./pages/Contacts";
-import Skills from "./pages/Skills";
+import Skills from "./pages/Skills/Skills";
 import Login from "./pages/Login";
 import './App.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';

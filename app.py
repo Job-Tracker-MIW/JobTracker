@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, jsonify, make_response
 import os
+
+import flask
 import database.database_config as db
 from dotenv import load_dotenv
 from flask.helpers import send_file
@@ -81,6 +83,37 @@ def get_skilltable():
           {'Header': "Job Matches",'accessor': "jobMatch"}
         ],
       }
+
+@app.route('/skills', methods=['POST'])
+def addSkill():
+  userid = db.getUserForMock()
+  skill = request.get_json()
+  wasAdded = db.addSkill(skill, userid)
+
+  if wasAdded:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/skills/<skillid>', methods=['PUT'])
+def updateSkill(skillid):
+  userid = db.getUserForMock()
+  skill = request.get_json()
+  wasUpdated = db.updateSkill(skill, userid, int(skillid))
+
+  if wasUpdated:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/skills/<skillid>', methods=['DELETE'])
+def deleteSkill(skillid):
+  wasDeleted = db.deleteSkill(int(skillid))
+
+  if wasDeleted:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
 
 @app.errorhandler(404)
 def not_found(e):

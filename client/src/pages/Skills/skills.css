@@ -1,0 +1,12 @@
+th {
+    border-bottom: solid 3px blue;
+    background-color: aliceblue;
+    color: black;
+    font-weight: bold;
+}
+
+td {
+    padding: 10px;
+    border: solid 1px gray;
+    background: white;
+}

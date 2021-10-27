@@ -180,6 +180,56 @@ def getUserForMock():
     mydb.close()
     return userid
 
+def addSkill(skill, userid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+    name = skill["name"]
+    prof = int(skill['proficiency'])
+
+    sql = "INSERT INTO skills (userId, name, proficiency) VALUES (%s,%s,%s)"
+    val = (userid, name, prof)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+def updateSkill(skill, userid, skillid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    name = skill["name"]
+    prof = int(skill['proficiency'])
+
+    sql = "UPDATE skills SET userid = %s, name = %s, proficiency = %s where skillid = %s"
+    val = (userid, name, prof, skillid)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+def deleteSkill(skillid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    sql = "DELETE FROM skills WHERE skillid = %s"
+    val = (skillid,)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
 def main():
     createAndSeedTables()
 
