@@ -76,13 +76,7 @@ def get_skilltable():
 
     userid = db.getUserForMock()
     val =  db.getTableSkills(userid)
-    return {"tableData": val,
-      "tableColumns":  [
-          {'Header': 'Skill', 'accessor': "skill"},
-          {'Header': 'Proficiency (1-10)', 'accessor': 'pro'},
-          {'Header': "Job Matches",'accessor': "jobMatch"}
-        ],
-      }
+    return {"tableData": val}
 
 @app.route('/skills', methods=['POST'])
 def addSkill():
@@ -99,6 +93,7 @@ def addSkill():
 def updateSkill(skillid):
   userid = db.getUserForMock()
   skill = request.get_json()
+  print(skill)
   wasUpdated = db.updateSkill(skill, userid, int(skillid))
 
   if wasUpdated:

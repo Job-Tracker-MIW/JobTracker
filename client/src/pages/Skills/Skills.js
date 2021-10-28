@@ -13,7 +13,7 @@ export default class Skills extends React.Component {
     this.getSkills();
   }
 
-  getSkills() {
+  getSkills = () => {
     fetch("/skills")
       .then(res => res.json())
       .then(
@@ -45,7 +45,7 @@ export default class Skills extends React.Component {
         </thead>
         <tbody>
         {this.state.skills.map(element =>
-                    <SkillRow key={element.skill} {...element}/>
+                    <SkillRow onRefresh={this.getSkills} key={element.skillid} {...element}/>
             )}
         </tbody>
       </table>

@@ -10,3 +10,11 @@ td {
     border: solid 1px gray;
     background: white;
 }
+
+.hidden {
+    display: none;
+}
+
+input {
+    width: 95%;
+}
