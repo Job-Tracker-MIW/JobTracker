@@ -6,17 +6,17 @@ export const SidebarData = [
 
   {
     title: "Applied Jobs",
-    path: "/applied_jobs",
+    path: "/applied-jobs-page",
     icon: <IoIcons.IoIosPaper />,
   },
   {
     title: "Contacts",
-    path: "/contacts",
+    path: "/contacts-page",
     icon: <FaIcons.FaPhone />,
   },
   {
     title: "Companies",
-    path: "/companies",
+    path: "/companies-page",
     icon: <FaIcons.FaBuilding />,
   
     // Maybe will incorporate subgenres of companies? 
@@ -36,7 +36,7 @@ export const SidebarData = [
   },
   {
     title: "Skills",
-    path: "/skills",
+    path: "/skills-page",
     icon: <FaIcons.FaTools />,
   },
 ];
