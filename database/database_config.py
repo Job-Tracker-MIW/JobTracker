@@ -158,7 +158,7 @@ def getTableSkills(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "select a.name as skill, a.proficiency as pro, b.jobMatch FROM Skills a LEFT JOIN " +\
+    sql = "select a.skillid, a.name as skill, a.proficiency as pro, b.jobMatch FROM Skills a LEFT JOIN " +\
           "(SELECT count(*) as jobMatch, skillid from JobsSkills GROUP BY skillid ) b ON a.skillid = b.skillid WHERE a.userid = %s"
 
     cur.execute(sql, (userid,))
