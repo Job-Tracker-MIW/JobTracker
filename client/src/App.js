@@ -61,11 +61,11 @@ function App() {
       <Sidebar />
       <Switch>
         <Route path="/" exact component={Login} /> {/* the home page */}
-        <Route path="/applied_jobs" exact component={AppliedJobs} />
-        <Route path="/contacts" exact component={Contacts} />
-        <Route path="/companies" exact component={Companies} />
-        <Route path="/skills" exact component={Skills} />
-        <Route path="/login" exact component={Login} />
+        <Route path="/applied-jobs-page" exact component={AppliedJobs} />
+        <Route path="/contacts-page" exact component={Contacts} />
+        <Route path="/companies-page" exact component={Companies} />
+        <Route path="/skills-page" exact component={Skills} />
+        <Route path="/login-page" exact component={Login} />
       </Switch>
   </Router>
   );
