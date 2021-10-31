@@ -24,6 +24,10 @@ def root():
 def favicon():
     return "", 200
 
+@app.route('/images/<path:filename>')
+def base_static(filename):
+    return send_from_directory(app.root_path + '/images/', filename)
+
 @app.route("/welcome_msg")
 def get_current_msg():
         return {"msg": "Welcome folks"}
@@ -59,17 +63,43 @@ def get_conttable():
       }
 
 @app.route("/companies")
-def get_comptable():
+def get_companytable():
 
     userid = db.getUserForMock()
-    val =  db.getTableContacts(userid)
-    return {"tableData": val, 
-      "tableColumns":  [
-          {'Header': 'Company', 'accessor': "company"},
-          {'Header': 'Contacts', 'accessor': 'contact'},
-          {'Header': "Job Matches",'accessor': "jobCount"}
-        ],
-      }
+    val =  db.getTableCompanies(userid)
+    return {"tableData": val}
+
+@app.route('/companies', methods=['POST'])
+def addCompany():
+  userid = db.getUserForMock()
+  company = request.get_json()
+  wasAdded = db.addCompany(company, userid)
+
+  if wasAdded:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/companies/<companyid>', methods=['PUT'])
+def updateCompany(companyid):
+  userid = db.getUserForMock()
+  company = request.get_json()
+  print(company)
+  wasUpdated = db.updateCompany(company, userid, int(companyid))
+
+  if wasUpdated:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/companies/<companyid>', methods=['DELETE'])
+def deleteCompany(companyid):
+  wasDeleted = db.deleteCompany(int(companyid))
+
+  if wasDeleted:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
 
 @app.route("/skills")
 def get_skilltable():
