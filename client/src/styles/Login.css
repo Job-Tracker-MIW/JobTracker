@@ -29,16 +29,14 @@
 }
 
     .box {
-    /* position: absolute; */
-    padding: 15px 15px 15px 15px;
-    position: relative;
+    position: absolute;
     width: 500px;
     height: 500px;
-    top: 50px;
-    bottom: 50px;
+    top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
     margin: auto;
     background:#f9f9f9;
-    border: 10px solid #1e90ff;
+    border:18px solid #1e90ff;
 }

@@ -7,8 +7,6 @@ import { SidebarData } from "./SidebarData";
 import SubMenu from "./SubMenu";
 import { IconContext } from "react-icons/lib";
 import "../styles/header.css";
-import jt_logo from "../assets/jt_logo.png";
-
 
 // Navbar Properties
 const Nav = styled.div`
@@ -85,9 +83,8 @@ const Sidebar = () => {
 
 
   return (
-      <>
-      <center><img src={jt_logo} class="h1-center" height="120" width ="350"/></center> 
-      <IconContext.Provider value={{ color: "#fff" }}>
+     
+      <><h1 class = "h1-center"> JOB TRACKER </h1><IconContext.Provider value={{ color: "#fff" }}>
       <Nav>
         <NavIcon to="#">
           <FaIcons.FaBars onClick={showSidebar} />
