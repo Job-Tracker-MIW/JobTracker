@@ -78,12 +78,12 @@ def createAndSeedTables():
     val = ("FAANGERMMAIGAWD",)
     mycursor.execute(sql, val)
 
-    sql = "select companyid from companies"
+    sql = "select companyid from Companies"
     mycursor.execute(sql)
     val = mycursor.fetchone()
     companyid = val[0]
 
-    sql = "select userid from users"
+    sql = "select userid from Users"
     mycursor.execute(sql)
     val = mycursor.fetchone()
     userid = val[0]
@@ -96,7 +96,7 @@ def createAndSeedTables():
     val = (int(userid), "Hope I get it", "Software Engineer I", int(companyid))
     mycursor.execute(sql, val)
 
-    sql = "select jobid from jobs"
+    sql = "select jobid from Jobs"
     mycursor.execute(sql)
     val = mycursor.fetchone()
     jobid = val[0]
@@ -105,7 +105,7 @@ def createAndSeedTables():
     val = (int(jobid), int(userid), "First Application", "Applied", datetime.date(2021,10,1))
     mycursor.execute(sql, val)
 
-    sql = "select skillid from skills"
+    sql = "select skillid from Skills"
     mycursor.execute(sql)
     val = mycursor.fetchone()
     skillid = val[0]
@@ -172,7 +172,7 @@ def getUserForMock():
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "select userid from users"
+    sql = "select userid from Users"
     cur.execute(sql)
     val = cur.fetchone()
     userid = int(val['userid'])
@@ -186,7 +186,7 @@ def addSkill(skill, userid):
     name = skill["name"]
     prof = int(skill['proficiency'])
 
-    sql = "INSERT INTO skills (userId, name, proficiency) VALUES (%s,%s,%s)"
+    sql = "INSERT INTO Skills (userId, name, proficiency) VALUES (%s,%s,%s)"
     val = (userid, name, prof)
     cur.execute(sql, val)
 
@@ -204,7 +204,7 @@ def updateSkill(skill, userid, skillid):
     name = skill["name"]
     prof = int(skill['proficiency'])
 
-    sql = "UPDATE skills SET userid = %s, name = %s, proficiency = %s where skillid = %s"
+    sql = "UPDATE Skills SET userid = %s, name = %s, proficiency = %s where skillid = %s"
     val = (userid, name, prof, skillid)
     cur.execute(sql, val)
 
@@ -219,7 +219,7 @@ def deleteSkill(skillid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "DELETE FROM skills WHERE skillid = %s"
+    sql = "DELETE FROM Skills WHERE skillid = %s"
     val = (skillid,)
     cur.execute(sql, val)
 

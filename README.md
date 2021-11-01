@@ -12,9 +12,10 @@ Walkthrough for installing virtual env and Flask https://www.section.io/engineer
 7. npm install --save styled-components
 8. npm install react-icons --save
 9. npm install react-minimal-side-navigation
+10. npm install react-scripts
 10. Might need to 'pip3 install dotenv' and 'pip3 install mysql-connector'
     - If having issues, use pip3 install python-dotenv instead
-11. npm install react-bootstrap bootstrap@5.1.3
+12. npm install react-bootstrap bootstrap@5.1.3
 
 Note: Execute 'source env/bin/activate' before working with Flask to work in virtual env
 
@@ -83,36 +84,44 @@ UBUNTU 20.04
 
 3. IMPORTANT: Set Authentication method to legacy during installation (do not choose default)
 
-4. Set a default root password during install (save this password somewhere)
+4. edit /etc/mysql/my.cnf
+   insert in [mysqld] (create it doesn't exist)
+   lower_case_table_names = 1
 
-5. create the shortcut 
+5. Set a default root password during install (save this password somewhere)
+
+6. create the shortcut 
    - sudo service mysql stop
    - sudo usermod -d /var/lib/mysql/ mysql
    - sudo service mysql start
 
-6. Open Terminal
+   if service fails to start try:
+   - sudo apt-get purge mysql-server mysql-client mysql-common
+   - sudo apt-get install mysql-server
 
-7. Connect: mysql -u root -p (Should show MySQL info if connected)
+7. Open Terminal
+
+8. Connect: mysql -u root -p (Should show MySQL info if connected)
    If you get an authentication error run:
    - sudo mysql -u root
    - ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass';
    then mysql -u root -p
    - save the password
-8. Create db: CREATE DATABASE jobtracker;
+9. Create db: CREATE DATABASE jobtracker;
 
-9. Select DB: USE jobtracker
+10. Select DB: USE jobtracker
 
-10. Show all tables in DB: show tables; (should show 0 for now)
+11. Show all tables in DB: show tables; (should show 0 for now)
 
-11. Navigate to project folder in terminal or terminal in IDE with project open (Ex. VSCode)
+12. Navigate to project folder in terminal or terminal in IDE with project open (Ex. VSCode)
 
-12. Install MySQL: pip3 install mysql-connector or may need pip3 install mysql-connector-python 
+13. Install MySQL: pip3 install mysql-connector or may need pip3 install mysql-connector-python 
 
-13. Install DotEnv: pip3 install dotenv or may need pip3 install dotenv-python
+14. Install DotEnv: pip3 install dotenv or may need pip3 install dotenv-python
 
     a. This allows you to use environment variables to store local MySQL connection creds
 
-14. Create a ‘.env’ file in the root of the project folder and add database credentials
+15. Create a ‘.env’ file in the root of the project folder and add database credentials
 
 DB_HOST="localhost"
 DB_USER="root"
@@ -120,8 +129,8 @@ DB_PASSWORD=""
 DB_DATABASE="jobtracker"
 DB_CREATE_SEED=True
 
-15. Make sure .env is in the .gitignore file so it isn’t pushed to our repo
-15. Run app.py
+16. Make sure .env is in the .gitignore file so it isn’t pushed to our repo
+17. Run app.py
 
 # Install Python dependencies
 1. Execute "pip3 install -r requirements.txt" from root folder of project
