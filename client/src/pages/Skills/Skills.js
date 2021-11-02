@@ -1,5 +1,6 @@
 import React, { } from 'react';
 import '../../styles/tableCSS.css';
+import SkillAdd from './SkillAdd';
 import SkillRow from './SkillRow';
 import './skills.css'
 
@@ -47,6 +48,7 @@ export default class Skills extends React.Component {
         {this.state.skills.map(element =>
                     <SkillRow onRefresh={this.getSkills} key={element.skillid} {...element}/>
             )}
+            <SkillAdd onRefresh={this.getSkills}></SkillAdd>
         </tbody>
       </table>
     </div>
