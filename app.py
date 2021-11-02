@@ -1,11 +1,13 @@
+import datetime
 from flask import Flask, render_template, request, jsonify, make_response
 import os
-
+import jwt
 import flask
 import database.database_config as db
 from dotenv import load_dotenv
 from flask.helpers import send_file
 from flask import send_from_directory 
+from functools import wraps
 
 # flag for standing up database locally
 standup_db = False
@@ -13,7 +15,25 @@ standup_db = False
 load_dotenv()
 
 app = Flask(__name__, static_folder="client/build/static", template_folder="client/build")
+app.config['SECRET_KEY'] = 'secretkey'
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('token')
+
+        if not token:
+            return render_template('index.html')
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'])
+        except:
+            return render_template('index.html')
+
+        return f(*args, **kwargs)
+    
+    return decorated
+
+# basic routes
 
 @app.route('/')
 def root():
@@ -28,10 +48,13 @@ def favicon():
 def get_current_msg():
         return {"msg": "Welcome folks"}
 
+# appjobs endpoints
+
 @app.route("/appjobs")
+@token_required
 def get_jobtable():
 
-    userid = db.getUserForMock()
+    userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
     val =  db.getTableApplications(userid)
 
     return {"tableData": 
@@ -43,10 +66,12 @@ def get_jobtable():
         ],
       }
 
+# contacts endpoints
+
 @app.route("/contacts")
+@token_required
 def get_conttable():
-    
-    userid = db.getUserForMock()
+    userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
     val =  db.getTableContacts(userid)
     print(val)
 
@@ -58,10 +83,12 @@ def get_conttable():
         ],
       }
 
-@app.route("/companies")
-def get_comptable():
+# companies endpoints
 
-    userid = db.getUserForMock()
+@app.route("/companies")
+@token_required
+def get_comptable():
+    userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
     val =  db.getTableCompanies(userid)
     return {"tableData": val, 
       "tableColumns":  [
@@ -71,16 +98,20 @@ def get_comptable():
         ],
       }
 
-@app.route("/skills")
-def get_skilltable():
+# skills endpoints
 
-    userid = db.getUserForMock()
+@app.route("/skills", methods=["GET"])
+@token_required
+def get_skilltable():
+    userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+    print(userid)
     val =  db.getTableSkills(userid)
     return {"tableData": val}
 
 @app.route('/skills', methods=['POST'])
+@token_required
 def addSkill():
-  userid = db.getUserForMock()
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   skill = request.get_json()
   wasAdded = db.addSkill(skill, userid)
 
@@ -90,8 +121,9 @@ def addSkill():
     return flask.Response(status=403)
 
 @app.route('/skills/<skillid>', methods=['PUT'])
+@token_required
 def updateSkill(skillid):
-  userid = db.getUserForMock()
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   skill = request.get_json()
   print(skill)
   wasUpdated = db.updateSkill(skill, userid, int(skillid))
@@ -102,7 +134,9 @@ def updateSkill(skillid):
     return flask.Response(status=403)
 
 @app.route('/skills/<skillid>', methods=['DELETE'])
+@token_required
 def deleteSkill(skillid):
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   wasDeleted = db.deleteSkill(int(skillid))
 
   if wasDeleted:
@@ -110,9 +144,21 @@ def deleteSkill(skillid):
   else:
     return flask.Response(status=403)
 
+# authentication endpoints
+
+@app.route('/login', methods=['POST'])
+def checklogin():
+    sent_info = request.get_json()
+    userid = db.check_login(sent_info)
+    if userid is not None:
+        token = jwt.encode({'userid': userid, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+        return jsonify({'response': True, 'token': token.decode('UTF-8')})
+    return jsonify({'response': False})
+
+# no endpoint found
 @app.errorhandler(404)
 def not_found(e):
-    return app.send_static_file('index.html')
+    return render_template('index.html')
 
 
 print("Starting server")

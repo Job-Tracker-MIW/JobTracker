@@ -29,7 +29,8 @@ export default class SkillAdd extends React.Component {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem('token')
             },
             body: JSON.stringify({"name": this.state.skill,
             "proficiency": this.state.pro})

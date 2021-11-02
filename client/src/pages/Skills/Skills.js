@@ -15,7 +15,11 @@ export default class Skills extends React.Component {
   }
 
   getSkills = () => {
-    fetch("/skills")
+    const options = {
+      method: 'GET',
+      headers: {'token': localStorage.getItem('token')}
+    }
+    fetch("/skills", options)
       .then(res => res.json())
       .then(
         (result) => {

@@ -26,7 +26,8 @@ export default class SkillRow extends React.Component {
 
     deleteRow = () => {
         fetch("/skills/" + this.props.skillid, {
-            method: 'DELETE'
+            method: 'DELETE',
+            header: {'token': localStorage.getItem('token')}
         })
         .then(res => {
             console.log(res);
@@ -38,7 +39,8 @@ export default class SkillRow extends React.Component {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem('token')
             },
             body: JSON.stringify({"name": this.state.skill,
             "proficiency": this.state.pro})
