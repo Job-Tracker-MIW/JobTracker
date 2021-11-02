@@ -154,6 +154,20 @@ def getTableContacts(userid):
     mydb.close()
     return(vals)
 
+def getUserForMock():
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    sql = "select userid from Users"
+    cur.execute(sql)
+    val = cur.fetchone()
+    userid = int(val['userid'])
+
+    mydb.close()
+    return userid
+
+# database calls for skills
+
 def getTableSkills(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -167,18 +181,6 @@ def getTableSkills(userid):
 
     mydb.close()
     return(vals)
-
-def getUserForMock():
-    mydb = mysql.connector.connect(**config)
-    cur = mydb.cursor(dictionary=True)
-
-    sql = "select userid from Users"
-    cur.execute(sql)
-    val = cur.fetchone()
-    userid = int(val['userid'])
-
-    mydb.close()
-    return userid
 
 def addSkill(skill, userid):
     mydb = mysql.connector.connect(**config)
@@ -229,6 +231,24 @@ def deleteSkill(skillid):
     mydb.close()
 
     return True
+
+# database calls for authentication/login/sign-up
+
+def check_login(user_info):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor()
+    username = user_info['username']
+    password = user_info['password']
+    query = "SELECT userid FROM Users WHERE username = %s AND password = %s"
+    values = (username, password)
+    cur.execute(query, values)
+    results = cur.fetchall()
+    cur.close()
+    mydb.close()
+    
+    if len(results) == 0:
+        return None
+    return results[0][0]
 
 def main():
     createAndSeedTables()
