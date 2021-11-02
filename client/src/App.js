@@ -11,25 +11,17 @@ import Login from "./pages/Login/Login";
 import './App.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
-
 function App() {
-
   const [currentMsg, setCurrentMsg] = useState(0);
   const [tableData, setTableData] = useState([]);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+
 
   useEffect(() => {
 	       fetch('/welcome_msg').then(res => res.json()).then(data => {
 		               setCurrentMsg(data.msg);
 		            });
 	    }, []);
-
-  // FOR SOME REASON THE BELOW WAS BRINGING UP A LOG ERROR...
-
-  // useEffect(() => {
-	//        fetch('/table').then(res => res.json()).then(data => {
-	// 	               setTableData( data.tableData );
-	// 	            });
-	//     }, []);
    
   const data = React.useMemo(() => tableData, [tableData]);
 
@@ -55,12 +47,17 @@ function App() {
 	    prepareRow
         } = useTable({ columns, data });
 
+  if(!token) {
+    return (
+      <Login setToken={setToken}></Login>
+    );
+  }
 
   return (
     <Router>
-      <Sidebar />
+      <Sidebar setToken={setToken}/>
       <Switch>
-        <Route path="/" exact component={Login} /> {/* the home page */}
+        <Route path="/" exact component={AppliedJobs} /> {/* the home page */}
         <Route path="/applied-jobs-page" exact component={AppliedJobs} />
         <Route path="/contacts-page" exact component={Contacts} />
         <Route path="/companies-page" exact component={Companies} />
@@ -72,80 +69,3 @@ function App() {
 }
 
 export default App;
-
-
-// Kept everything from below. Still need to figure out how to incorportate the table Matthew started. 
-    
-  
-//   );
-  //   <div className="App">
-  //     <header className="App-header">
-  //       <img src={logo} className="App-logo" alt="logo" />
-  //       <p>
-  //         Edit <code>src/App.js</code> and save to reload.
-  //       </p>
-  //       <a
-  //         className="App-link"
-  //         href="https://reactjs.org"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //       >
-  //         Learn React
-  //       </a>
-
-  //       <p> {currentMsg}. </p>
-  //       <p>{JSON.stringify(data)}</p>
-
-  //    <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
-  //      <thead>
-  //        {headerGroups.map(headerGroup => (
-  //          <tr {...headerGroup.getHeaderGroupProps()}>
-  //            {headerGroup.headers.map(column => (
-  //              <th
-  //                {...column.getHeaderProps()}
-  //                style={{
-  //                  borderBottom: 'solid 3px red',
-  //                  background: 'aliceblue',
-  //                  color: 'black',
-  //                  fontWeight: 'bold',
-  //                }}
-  //              >
-  //                {column.render('Header')}
-  //              </th>
-  //            ))}
-  //          </tr>
-  //        ))}
-  //      </thead>
-  //      <tbody {...getTableBodyProps()}>
-  //        {rows.map(row => {
-  //          prepareRow(row)
-  //          return (
-  //            <tr {...row.getRowProps()}>
-  //              {row.cells.map(cell => {
-  //                return (
-  //                  <td
-  //                    {...cell.getCellProps()}
-  //                    style={{
-  //                      padding: '10px',
-  //                      border: 'solid 1px gray',
-  //                      background: 'papayawhip',
-  //                    }}
-  //                  >
-  //                    {cell.render('Cell')}
-  //                  </td>
-  //                )
-  //              })}
-  //            </tr>
-  //          )
-  //        })}
-  //      </tbody>
-  //    </table>
-
-	// </header>
-  //   </div>
-
-
-  // );
-  //  }
-
-// export default App;

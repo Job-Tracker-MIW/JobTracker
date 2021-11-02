@@ -77,10 +77,15 @@ export const NavBtnLink = styled(Link)`
   }
 `;
   
-const Sidebar = () => {
+const Sidebar = (props) => {
   const [sidebar, setSidebar] = useState(false);
   
   const showSidebar = () => setSidebar(!sidebar);
+
+  const removeToken = () => {
+    localStorage.removeItem('token')
+    props.setToken(0);
+  };
 
 
   return (
@@ -104,7 +109,7 @@ const Sidebar = () => {
 
 
         <NavBtn>
-          <NavBtnLink to='./'>Log In</NavBtnLink>
+          <NavBtnLink onClick={removeToken}>Sign Out</NavBtnLink>
         </NavBtn>
       </Nav>
 

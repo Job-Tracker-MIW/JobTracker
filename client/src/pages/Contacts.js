@@ -10,7 +10,12 @@ const Contacts = () => {
 
 
    useEffect(() => {
-        fetch('/contacts').then(res => res.json()).then(data => {
+        fetch('/contacts', 
+        {
+          method: 'GET',
+          headers: {'token': localStorage.getItem('token')}
+        }
+        ).then(res => res.json()).then(data => {
           setTableData( data.tableData );
           setTableColumns( data.tableColumns );
           });

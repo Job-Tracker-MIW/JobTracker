@@ -17,7 +17,12 @@ const AppliedJobs = () => {
       }, []);
 
   useEffect(() => {
-      fetch('/appjobs').then(res => res.json()).then(data => {
+      fetch('/appjobs', 
+      {
+        method: 'GET',
+        headers: {'token': localStorage.getItem('token')}
+      }
+      ).then(res => res.json()).then(data => {
           setTableData( data.tableData );
           setTableColumns( data.tableColumns );
           });

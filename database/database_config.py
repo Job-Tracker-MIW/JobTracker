@@ -239,6 +239,7 @@ def check_login(user_info):
     cur = mydb.cursor()
     username = user_info['username']
     password = user_info['password']
+    print(password)
     query = "SELECT userid FROM Users WHERE username = %s AND password = %s"
     values = (username, password)
     cur.execute(query, values)
