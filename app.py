@@ -88,9 +88,8 @@ def get_conttable():
 @app.route("/companies")
 @token_required
 def get_comptable():
-
     userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
-    val =  db.getTableContacts(userid)
+    val =  db.getTableCompanies(userid)
     return {"tableData": val, 
       "tableColumns":  [
           {'Header': 'Company', 'accessor': "company"},
