@@ -62,7 +62,7 @@ def get_conttable():
 def get_comptable():
 
     userid = db.getUserForMock()
-    val =  db.getTableContacts(userid)
+    val =  db.getTableCompanies(userid)
     return {"tableData": val, 
       "tableColumns":  [
           {'Header': 'Company', 'accessor': "company"},
