@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import AppliedJobs from "./pages/AppliedJobs";
 import Companies from "./pages/Companies";
 // import { Companies, CompaniesOne, CompaniesTwo } from "./pages/Companies";
-import Contacts from "./pages/Contacts";
+import Contacts from "./pages/Contacts/Contacts";
 import Skills from "./pages/Skills/Skills";
 import Login from "./pages/Login/Login";
 import './App.css';

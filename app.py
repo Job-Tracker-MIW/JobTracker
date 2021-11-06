@@ -68,20 +68,68 @@ def get_jobtable():
 
 # contacts endpoints
 
-@app.route("/contacts")
+@app.route("/contacts", methods=["GET"])
 @token_required
 def get_conttable():
     userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
     val =  db.getTableContacts(userid)
     print(val)
 
-    return {"tableData": val,
-      "tableColumns":  [
-        {'Header': 'Contact', 'accessor': 'contact'},
-        {'Header': 'Companies', 'accessor': "company"},
-        {'Header': "Job Matches",'accessor': "jobCount"}
-        ],
-      }
+    return {"tableData": val } #,
+      #"tableColumns":  [
+      #  {'Header': 'Contact', 'accessor': 'contact'},
+      #  {'Header': 'E-Mail', 'accessor': 'email'},
+      #  {'Header': 'Phone', 'accessor': 'phone'},
+      #  {'Header': 'Companies', 'accessor': "company"},
+      #  {'Header': "Job Matches",'accessor': "jobCount"}
+      #  ],
+      #}
+
+
+@app.route('/contacts', methods=['POST'])
+@token_required
+def addContact():
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+  contact = request.get_json()
+
+  print('here --->', contact)
+  wasAdded = db.addContact(contact, userid)
+
+  if wasAdded:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/contacts/<contactid>', methods=['PUT'])
+@token_required
+def updateContact(contactid):
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+  contact = request.get_json()
+
+  wasUpdated = db.updateContact(contact, userid, int(contactid))
+
+  if wasUpdated:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/contacts/<contactid>', methods=['DELETE'])
+@token_required
+def deleteContact(contactid):
+  print('toDeleted')
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+
+  wasDeleted = db.deleteContact(int(contactid))
+
+  print('wasDeleted', wasDeleted)
+
+  if wasDeleted:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+
+
 
 # companies endpoints
 
