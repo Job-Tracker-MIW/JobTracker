@@ -160,8 +160,13 @@ def createAndSeedTables():
     mycursor.execute(sql, val)
 
     sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(userid), 'Jane Smith', int(companyid2), 'jdoe@gfaangermaigawd.com', '555-555-5555')
+    val = (int(userid), 'Jane Smith', int(companyid2), 'jdoe@osu.edu.com', '555-555-5555')
     mycursor.execute(sql, val)
+
+    sql = "select contactid from Contacts"
+    mycursor.execute(sql)
+    val = mycursor.fetchone()
+    contactid = val[0]
 
 
 
@@ -189,7 +194,7 @@ def getTableContacts(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "SELECT b.company, a.name as contact, c.jobCount FROM Contacts a LEFT JOIN Companies b ON a.companyid = b.companyid " +\
+    sql = "SELECT a.contactid, b.company, b.companyid, a.name as contact, a.email, a.phone, c.jobCount FROM Contacts a LEFT JOIN Companies b ON a.companyid = b.companyid " +\
           "LEFT JOIN (SELECT count(*) as jobcount, companyid, userid FROM Jobs GROUP BY companyid, userid) c " +\
           "ON a.companyid = c.companyid and a.userid = c.userid WHERE a.userid = %s " 
 
@@ -261,6 +266,37 @@ def addSkill(skill, userid):
 
     return True
 
+def addContact(contact, userid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    name = contact["name"]
+    company = contact["company"]
+
+    sql = "select companyid from Companies where company = %s"
+
+    cur.execute(sql, (company,))
+
+    companyid = cur.fetchall()[0]['companyid']
+
+    email = contact["email"]
+    phone = contact["phone"]
+
+
+    sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
+    val = (userid, name, companyid, email, phone)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+
+
+
 def updateSkill(skill, userid, skillid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -279,6 +315,29 @@ def updateSkill(skill, userid, skillid):
 
     return True
 
+def updateContact(contact, userid, contactid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    name = contact["name"]
+    #companyid = contact["companyid"]
+    email = contact["email"]
+    phone = contact["phone"]
+
+    sql = "UPDATE Contacts SET userid = %s, name = %s, email = %s, phone = %s where contactid = %s"
+    val = (userid, name, email, phone, contactid)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+
+
+
 def deleteSkill(skillid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -293,6 +352,24 @@ def deleteSkill(skillid):
     mydb.close()
 
     return True
+
+
+def deleteContact(contactid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    sql = "DELETE FROM Contacts WHERE contactid = %s"
+    val = (contactid,)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+
 
 # database calls for authentication/login/sign-up
 

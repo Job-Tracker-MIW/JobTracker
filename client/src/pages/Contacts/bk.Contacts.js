@@ -1,7 +1,8 @@
 import React, {useMemo, useState, useEffect } from 'react';
 import { makeRenderer, useTable } from "react-table";
 import '../styles/tableCSS.css';
-
+import ContactsAdd from './ContactsAdd'; 
+import './contacts.css';
 
 const Contacts = () => {
 
