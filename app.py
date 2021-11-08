@@ -1,5 +1,6 @@
 import datetime
-from flask import Flask, render_template, request, jsonify, make_response
+from datetime import date
+from flask import Flask, render_template, request, jsonify, make_response, flash
 import os
 import jwt
 import flask
@@ -8,6 +9,7 @@ from dotenv import load_dotenv
 from flask.helpers import send_file
 from flask import send_from_directory 
 from functools import wraps
+
 
 # flag for standing up database locally
 standup_db = False
@@ -48,6 +50,10 @@ def favicon():
 def get_current_msg():
         return {"msg": "Welcome folks"}
 
+@app.route('/flash/<message>')
+def flash(message):
+  return render_template('flash.html', msg=message)
+
 # appjobs endpoints
 
 @app.route("/appjobs")
@@ -65,6 +71,23 @@ def get_jobtable():
         {'Header': "Application Date",'accessor': "appdt"}
         ],
       }
+
+@app.route('/appjobs', methods=['POST'])
+@token_required
+def addToApplied():
+    userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+    applied_attributes = request.get_json()
+
+    today = date.today()
+    curr_datetime = today.strftime("%m/%d/%y")
+
+    wasAdded = db.addToApplied(userid, applied_attributes, curr_datetime)
+
+    if wasAdded:
+        return flask.Response(status=201)
+    else:
+        return flask.Response(status=403)
+
 
 # contacts endpoints
 
@@ -129,22 +152,44 @@ def deleteContact(contactid):
     return flask.Response(status=403)
 
 
-
-
 # companies endpoints
 
-@app.route("/companies")
+@app.route("/companies", methods=["GET", "POST", "DELETE"])
 @token_required
 def get_comptable():
-    userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
-    val =  db.getTableCompanies(userid)
-    return {"tableData": val, 
-      "tableColumns":  [
-          {'Header': 'Company', 'accessor': "company"},
-          {'Header': 'Contacts', 'accessor': 'contact'},
-          {'Header': "Job Matches",'accessor': "jobCount"}
-        ],
-      }
+    if request.method == 'GET':
+        userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+        val =  db.getTableCompanies(userid)
+
+        return {"tableData": val}
+    
+    if request.method =='POST':
+        userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+        company_attributes = request.get_json()
+        wasAdded = db.addCompany(company_attributes, userid)
+
+        if wasAdded:
+            print("Added Successfully")
+            # flash("Added Successfully!")
+            return flask.Response(status=201)
+        else:
+            # flash("Add NOT Successful")
+            return flask.Response(status=403)
+    
+    if request.method =='DELETE':
+        userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+        company_attributes = request.get_json()
+        wasDeleted = db.deleteCompany(company_attributes, userid)
+
+        if wasDeleted:
+            # flash("Delete Successful!")
+            return flask.Response(status=201)
+        else:
+            # flash("Delete NOT Successful")
+            return flask.Response(status=403)
+    else:
+        print("Something Went Wrong")
+   
 
 # skills endpoints
 
@@ -167,6 +212,7 @@ def addSkill():
     return flask.Response(status=201)
   else:
     return flask.Response(status=403)
+    
 
 @app.route('/skills/<skillid>', methods=['PUT'])
 @token_required
@@ -222,4 +268,4 @@ if __name__ == '__main__':
     # Will set port to 5000 on local machine, but allow Heroku to bind on deployment.
     port = int(os.environ.get('PORT', 80))
     # app.run(host='0.0.0.0', port=port)
-    app.run(host='0.0.0.0', port=8766) ## <-- leave this for Isaac for the time-being
+    app.run(host='0.0.0.0', port=8767) ## <-- leave this for Isaac for the time-being

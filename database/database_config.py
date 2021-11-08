@@ -39,27 +39,27 @@ def createAndSeedTables():
 
     sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
     userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, companyid INT NOT NULL,\
-    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid))"
+    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Applications (appid INT AUTO_INCREMENT PRIMARY KEY,\
     jobid INT NOT NULL, userid INT NOT NULL, name VARCHAR(50) NOT NULL, status VARCHAR(50) NOT NULL, application_date DATE NOT NULL,\
-    FOREIGN KEY(jobid) REFERENCES Jobs(jobid), FOREIGN KEY(userid) REFERENCES Users(userid))"
+    FOREIGN KEY(jobid) REFERENCES Jobs(jobid), FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Skills (skillid INT AUTO_INCREMENT PRIMARY KEY,\
     userid INT NOT NULL, name VARCHAR(50) NOT NULL, proficiency VARCHAR(25) NOT NULL,\
-    FOREIGN KEY(userid) REFERENCES Users(userid))"
+    FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
     sql = "CREATE TABLE JobsSkills (id INT AUTO_INCREMENT PRIMARY KEY,\
     skillid INT NOT NULL, jobid INT NOT NULL, FOREIGN KEY(skillid) REFERENCES Skills(skillid),\
-    FOREIGN KEY(jobid) REFERENCES Jobs(jobid))"
+    FOREIGN KEY(jobid) REFERENCES Jobs(jobid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Contacts (contactid INT AUTO_INCREMENT PRIMARY KEY,\
     userid INT NOT NULL, name VARCHAR(50), companyid INT, email VARCHAR(50), phone VARCHAR(15),\
-    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid))"
+    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
 
@@ -189,6 +189,28 @@ def getTableApplications(userid):
     mydb.close()
     return(vals)
 
+# I just stubbed this for testing the Companies Applied page. we can delete later
+# and use Mat's implementation.
+def addToApplied(userid, applied_attributes, curr_datetime):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+    jobid = applied_attributes["jobid"]
+    application_date = curr_datetime
+    name = "Another Application 1"
+    status = "Applied"
+
+    sql = """INSERT INTO Applications (userid, jobid, name, status, application_date) 
+                VALUES (%s, %s, %s, %s, %s)"""
+
+    val = (int(userid), int(jobid), name, status, application_date)
+    cur.execute(sql, val)
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
 
 def getTableContacts(userid):
     mydb = mysql.connector.connect(**config)
@@ -221,17 +243,73 @@ def getTableCompanies(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "SELECT a.company, b.name as contact, c.count as jobCount FROM Companies a LEFT JOIN Contacts b ON a.companyid = b.companyid " +\
-            "AND b.userid = %s LEFT JOIN (SELECT count(*) as count, companyid, userid from Jobs GROUP BY companyid, userid) c "\
-            "ON b.companyid = c.companyid AND b.userid = c.userid"
-
+    sql = """SELECT Companies.companyid, Companies.company, Jobs.title, Jobs.jobid, Contacts.name
+            FROM Jobs
+            LEFT JOIN Companies ON Jobs.companyid = Companies.companyid
+            LEFT JOIN Contacts ON Companies.companyid = Contacts.companyid
+            WHERE Jobs.userid = %s
+            ORDER BY Companies.company;"""
 
     cur.execute(sql, (userid,))
 
     vals = cur.fetchall()
+    print("TABLE COMPANIES", vals)
 
     mydb.close()
     return(vals)
+
+def addCompany(company_attributes, userid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+    company = company_attributes["company"]
+    title = company_attributes["title"]
+    name = 'We Should Get Rid Of This'
+
+    sql = "INSERT INTO Companies (company) VALUES (%s)"
+    val = (company,)
+    cur.execute(sql, val)
+    mydb.commit()
+
+    getcompanyid = """SELECT Companies.companyid 
+                FROM Companies 
+                ORDER BY Companies.companyid 
+                DESC LIMIT 1;"""
+    cur.execute(getcompanyid)
+    vals = cur.fetchone()
+    companyid = int(vals['companyid'])
+
+    sql2 = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
+    val2 = (int(userid), name, title, companyid)
+    cur.execute(sql2, val2)
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+def deleteCompany(company_attributes, userid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+    company_id = int(company_attributes["companyid"])
+
+    sql = "DELETE FROM Applications WHERE jobid = %s AND userid = %s"
+    val = (company_id, userid)
+    cur.execute(sql, val)
+
+    sql = "DELETE FROM Jobs WHERE jobid = %s AND userid = %s"
+    val = (company_id, userid)
+    cur.execute(sql, val)
+
+    sql2 = "DELETE FROM Companies WHERE companyid = %s"
+    val2 = (company_id,)
+    cur.execute(sql2, val2)
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
 
 # database calls for skills
 
@@ -335,9 +413,6 @@ def updateContact(contact, userid, contactid):
 
     return True
 
-
-
-
 def deleteSkill(skillid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -368,8 +443,6 @@ def deleteContact(contactid):
     mydb.close()
 
     return True
-
-
 
 # database calls for authentication/login/sign-up
 
