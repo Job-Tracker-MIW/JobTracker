@@ -2,7 +2,7 @@ import React, {useMemo, useState, useEffect } from 'react';
 import { makeRenderer, useTable } from "react-table";
 import Sidebar from "./components/Sidebar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import AppliedJobs from "./pages/AppliedJobs";
+import AppliedJobs from "./pages/AppliedJobs/AppliedJobs";
 import Companies from "./pages/Companies";
 // import { Companies, CompaniesOne, CompaniesTwo } from "./pages/Companies";
 import Contacts from "./pages/Contacts/Contacts";

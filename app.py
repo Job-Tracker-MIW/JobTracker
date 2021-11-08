@@ -57,14 +57,58 @@ def get_jobtable():
     userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
     val =  db.getTableApplications(userid)
 
+    print('appget', val)
     return {"tableData": 
-        val,
-            "tableColumns":  [
-        {'Header': 'Title', 'accessor': 'title'},
-        {'Header': 'Company', 'accessor': "company"},
-        {'Header': "Application Date",'accessor': "appdt"}
-        ],
-      }
+        val}#,
+       #     "tableColumns":  [
+       # {'Header': 'Title', 'accessor': 'title'},
+       # {'Header': 'Company', 'accessor': "company"},
+       # {'Header': "Application Date",'accessor': "appdt"}
+       # ],
+     # }
+
+@app.route('/appjobs', methods=['POST'])
+@token_required
+def addAppJob():
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+  application = request.get_json()
+
+  wasAdded = db.addApplications(application, userid)
+
+  if wasAdded:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/appjobs/<appid>', methods=['PUT'])
+@token_required
+def updateAppJob(appid):
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+  application = request.get_json()
+
+  wasUpdated = db.updateApplications(application, userid, int(appid))
+
+  if wasUpdated:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/appjobs/<appid>', methods=['DELETE'])
+@token_required
+def deleteAppJob(appid):
+
+
+  print('deleting ------------------------')
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+
+  wasDeleted = db.deleteApplications(int(appid))
+
+  if wasDeleted:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+
 
 # contacts endpoints
 
@@ -92,7 +136,6 @@ def addContact():
   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   contact = request.get_json()
 
-  print('here --->', contact)
   wasAdded = db.addContact(contact, userid)
 
   if wasAdded:
