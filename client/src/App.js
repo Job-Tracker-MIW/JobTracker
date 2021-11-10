@@ -7,6 +7,7 @@ import Companies from "./pages/Companies/Companies";
 import Contacts from "./pages/Contacts/Contacts";
 import Skills from "./pages/Skills/Skills";
 import Login from "./pages/Login/Login";
+import Signup from "./pages/Signup/Signup";
 import './App.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
@@ -48,7 +49,12 @@ function App() {
 
   if(!token) {
     return (
-      <Login setToken={setToken}></Login>
+      <Router>
+      <Switch>
+        <Route path="/" exact component={Login} />
+        <Route path="/signup" exact component={Signup} />
+      </Switch>
+      </Router>
     );
   }
 
@@ -62,6 +68,7 @@ function App() {
         <Route path="/companies-page" exact component={Companies} />
         <Route path="/skills-page" exact component={Skills} />
         <Route path="/login-page" exact component={Login} />
+        <Route path="/signup" exact component={Signup} />
       </Switch>
   </Router>
   );
