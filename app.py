@@ -73,18 +73,18 @@ def get_jobtable():
        # ],
      # }
 
-@app.route('/appjobs', methods=['POST'])
-@token_required
-def addAppJob():
-  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
-  application = request.get_json()
+# @app.route('/appjobs', methods=['POST'])
+# @token_required
+# def addAppJob():
+#   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+#   application = request.get_json()
 
-  wasAdded = db.addApplications(application, userid)
+#   wasAdded = db.addApplications(application, userid)
 
-  if wasAdded:
-    return flask.Response(status=201)
-  else:
-    return flask.Response(status=403)
+#   if wasAdded:
+#     return flask.Response(status=201)
+#   else:
+#     return flask.Response(status=403)
 
 @app.route('/appjobs/<appid>', methods=['PUT'])
 @token_required

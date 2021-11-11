@@ -52,7 +52,7 @@ function App() {
     return (
       <Router>
       <Switch>
-        <Route path="/" component={() => <Login setToken={setToken}/>}/>
+        <Route path="/" exact component={() => <Login setToken={setToken}/>}/>
         <Route path="/signup" exact component={Signup} />
       </Switch>
       </Router>

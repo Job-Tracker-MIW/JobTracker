@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import './Login.css';
 import jt_logo from "../../assets/jt_logo.png";
 import { Link } from 'react-router-dom';
-import Signup from "../Signup/Signup";
 
 export default class Login extends Component {
     constructor(props) {

@@ -20,7 +20,6 @@ def createAndSeedTables():
 
     # drop tables
 
-
     mycursor.execute("DROP TABLE IF EXISTS JobsSkills")
     mycursor.execute("DROP TABLE IF EXISTS Applications")
     mycursor.execute("DROP TABLE IF EXISTS Skills")
@@ -381,11 +380,9 @@ def addApplications(application, userid):
     company = application["company"]
     appdt = parser.parse(application["appdt"])
 
-
     sql = "select companyid from Companies where company = %s"
     cur.execute(sql, (company,))
     companyid = cur.fetchall()[0]['companyid']
-
 
     sql = "select jobid from Jobs where title = %s and companyid = %s"
     cur.execute(sql, (title, companyid))
@@ -453,11 +450,9 @@ def updateApplications(application, userid, appid):
     cur.execute(sql, (company,))
     companyid = cur.fetchall()[0]['companyid']
 
-
     sql = "select jobid from Jobs where title = %s and companyid = %s"
     cur.execute(sql, (title, companyid))
     jobid = cur.fetchall()[0]['jobid']
-
 
     sql = "UPDATE Applications SET jobid = %s, userid = %s, name = %s, status = %s, application_date = %s where appid = %s"
     val = (int(jobid), int(userid), title, "Applied", datetime.date(appdt.year,appdt.month,appdt.day), int(appid))
