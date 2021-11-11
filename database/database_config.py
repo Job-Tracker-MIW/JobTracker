@@ -38,12 +38,12 @@ def createAndSeedTables():
 
     sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
     userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, companyid INT NOT NULL,\
-    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
+    FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE, FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Applications (appid INT AUTO_INCREMENT PRIMARY KEY,\
     jobid INT NOT NULL, userid INT NOT NULL, name VARCHAR(50) NOT NULL, status VARCHAR(50) NOT NULL, application_date DATE NOT NULL,\
-    FOREIGN KEY(jobid) REFERENCES Jobs(jobid), FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE)"
+    FOREIGN KEY(jobid) REFERENCES Jobs(jobid) ON DELETE CASCADE, FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Skills (skillid INT AUTO_INCREMENT PRIMARY KEY,\
@@ -52,13 +52,13 @@ def createAndSeedTables():
     mycursor.execute(sql)
 
     sql = "CREATE TABLE JobsSkills (id INT AUTO_INCREMENT PRIMARY KEY,\
-    skillid INT NOT NULL, jobid INT NOT NULL, FOREIGN KEY(skillid) REFERENCES Skills(skillid),\
+    skillid INT NOT NULL, jobid INT NOT NULL, FOREIGN KEY(skillid) REFERENCES Skills(skillid) ON DELETE CASCADE,\
     FOREIGN KEY(jobid) REFERENCES Jobs(jobid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Contacts (contactid INT AUTO_INCREMENT PRIMARY KEY,\
     userid INT NOT NULL, name VARCHAR(50), companyid INT, email VARCHAR(50), phone VARCHAR(15),\
-    FOREIGN KEY(userid) REFERENCES Users(userid), FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
+    FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE, FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
 
@@ -244,10 +244,10 @@ def getTableCompanies(userid):
 
     sql = """SELECT Companies.companyid, Companies.company, Jobs.title, Jobs.jobid, Contacts.name
             FROM Jobs
-            LEFT JOIN Companies ON Jobs.companyid = Companies.companyid
+            INNER JOIN Companies ON Jobs.companyid = Companies.companyid
             LEFT JOIN Contacts ON Companies.companyid = Contacts.companyid
-            WHERE Jobs.userid = %s
-            ORDER BY Companies.company;"""
+            WHERE Jobs.userid = %s;"""
+            # ORDER BY Companies.company;"""
 
     cur.execute(sql, (userid,))
 
@@ -260,6 +260,26 @@ def getTableCompanies(userid):
 def addCompany(company_attributes, userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
+
+    # THE BELOW 9 LINES CHECKS FOR A MATCHING NAME AND THEN GRABS THE ID
+    # HOWEVER, IDK HOW TO CHANGE THE AUTO INCRMENTING ID TO THE
+    # SAME_COMPANY_ID VALUE AS DESCRIBED BELOW. ASLO, THIS SHOULD ALL
+    # BE RECTORED INTO ANOTHER FUNCTION AS SOME POINT. 
+    check_company_name = "SELECT * FROM Companies"
+    cur.execute(check_company_name)
+    check_name = cur.fetchall()
+    co_name = company_attributes["company"]
+
+    same_company_id = ''
+
+    for i in check_name:
+    	if (i['company']) == co_name:
+            same_company_id = i['companyid']
+            print("SAME ID", same_company_id, co_name)
+
+    ###################################################
+
+    #print("COMPANY ATTRIBUTES", company_attributes)
     company = company_attributes["company"]
     title = company_attributes["title"]
     name = 'We Should Get Rid Of This'
@@ -291,18 +311,22 @@ def deleteCompany(company_attributes, userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
     company_id = int(company_attributes["companyid"])
+    job_id = int(company_attributes["jobid"])
+    print("COMPANY ID", company_id)
+    print("JOB ID", job_id)
 
-    sql = "DELETE FROM Applications WHERE jobid = %s AND userid = %s"
-    val = (company_id, userid)
+    # SOMETHING WEIRD IS HAPPENING WHERE THE PREDIFEND VALUES WE ARE POPULATING
+    # THE TABLES WITH ARENT DELETING CORRECTLY. HOWEVER, THEY EVENTUALLY WILL DELETE.
+    # ALSO, WHEN WE ENTER A NEW COMPANY, ALL OF THAT WILL DELETE CORRECTLY THE FIRST
+    # TIME
+    
+    sql = "DELETE FROM Jobs WHERE jobid = %s AND companyid = %s AND userid = %s"
+    val = (job_id, company_id, userid)
     cur.execute(sql, val)
 
-    sql = "DELETE FROM Jobs WHERE jobid = %s AND userid = %s"
-    val = (company_id, userid)
-    cur.execute(sql, val)
-
-    sql2 = "DELETE FROM Companies WHERE companyid = %s"
-    val2 = (company_id,)
-    cur.execute(sql2, val2)
+    sql_2 = "DELETE FROM Applications WHERE jobid = %s AND userid = %s"
+    val_2 = (job_id, userid)
+    cur.execute(sql_2, val_2)
 
     mydb.commit()
     cur.close()
