@@ -2,7 +2,7 @@ import mysql.connector
 import os
 from dotenv import load_dotenv
 import datetime
-
+from dateutil import parser
 
 load_dotenv()
 
@@ -179,7 +179,7 @@ def getTableApplications(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "SELECT b.title AS title, c.company AS company, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
+    sql = "SELECT a.appid, b.title AS title, c.company AS company, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
           " a.jobid = b.jobid LEFT JOIN Companies c on b.companyid = c.companyid WHERE a.userid = %s"
     
     cur.execute(sql, (userid,))
@@ -344,6 +344,7 @@ def addSkill(skill, userid):
 
     return True
 
+
 def addContact(contact, userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -363,6 +364,36 @@ def addContact(contact, userid):
 
     sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
     val = (userid, name, companyid, email, phone)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+def addApplications(application, userid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    title = application["title"]
+    company = application["company"]
+    appdt = parser.parse(application["appdt"])
+
+
+    sql = "select companyid from Companies where company = %s"
+    cur.execute(sql, (company,))
+    companyid = cur.fetchall()[0]['companyid']
+
+
+    sql = "select jobid from Jobs where title = %s and companyid = %s"
+    cur.execute(sql, (title, companyid))
+    jobid = cur.fetchall()[0]['jobid']
+
+    sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(jobid), int(userid), title, "Applied", datetime.date(appdt.year,appdt.month,appdt.day))
+   
     cur.execute(sql, val)
 
 
@@ -410,6 +441,35 @@ def updateContact(contact, userid, contactid):
 
     return True
 
+def updateApplications(application, userid, appid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    title = application["title"]
+    company = application["company"]
+    appdt = parser.parse(application["appdt"])
+
+    sql = "select companyid from Companies where company = %s"
+    cur.execute(sql, (company,))
+    companyid = cur.fetchall()[0]['companyid']
+
+
+    sql = "select jobid from Jobs where title = %s and companyid = %s"
+    cur.execute(sql, (title, companyid))
+    jobid = cur.fetchall()[0]['jobid']
+
+
+    sql = "UPDATE Applications SET jobid = %s, userid = %s, name = %s, status = %s, application_date = %s where appid = %s"
+    val = (int(jobid), int(userid), title, "Applied", datetime.date(appdt.year,appdt.month,appdt.day), int(appid))
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
 def deleteSkill(skillid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -439,7 +499,22 @@ def deleteContact(contactid):
     mydb.close()
 
     return True
+  
+def deleteApplications(appid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
 
+    sql = "DELETE FROM Applications WHERE appid = %s"
+    val = (appid,)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+  
 # database calls for authentication/login/sign-up
 
 def check_login(user_info):
