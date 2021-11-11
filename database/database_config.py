@@ -324,9 +324,9 @@ def deleteCompany(company_attributes, userid):
     val = (job_id, company_id, userid)
     cur.execute(sql, val)
 
-    sql = "DELETE FROM Applications WHERE jobid = %s AND userid = %s"
-    val = (job_id, userid)
-    cur.execute(sql, val)
+    sql_2 = "DELETE FROM Applications WHERE jobid = %s AND userid = %s"
+    val_2 = (job_id, userid)
+    cur.execute(sql_2, val_2)
 
     mydb.commit()
     cur.close()
