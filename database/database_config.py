@@ -372,9 +372,6 @@ def addContact(contact, userid):
 
     return True
 
-
-
-
 def updateSkill(skill, userid, skillid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -428,7 +425,6 @@ def deleteSkill(skillid):
 
     return True
 
-
 def deleteContact(contactid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -451,7 +447,6 @@ def check_login(user_info):
     cur = mydb.cursor()
     username = user_info['username']
     password = user_info['password']
-    print(password)
     query = "SELECT userid FROM Users WHERE username = %s AND password = %s"
     values = (username, password)
     cur.execute(query, values)
@@ -462,6 +457,46 @@ def check_login(user_info):
     if len(results) == 0:
         return None
     return results[0][0]
+
+def check_username_unique(username):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor()
+    query = "SELECT COUNT(*) FROM Users WHERE username = %s"
+    values = (username, )
+    cur.execute(query, values)
+
+    results = cur.fetchall()
+    count = int(results[0][0])
+
+    cur.close()
+    mydb.close()
+
+    print(count)
+
+    if count > 0:
+        return False
+
+    return True
+
+def signup_user(sent_info):
+    username = sent_info['username']
+    password = sent_info['password']
+    email = sent_info['email']
+
+    if not check_username_unique(username):
+        return False
+
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor()
+    query = "INSERT INTO Users (username, password, email) VALUES (%s, %s, %s)"
+    values = (username, password, email)
+    cur.execute(query, values)
+    mydb.commit()
+    
+    cur.close()
+    mydb.close()
+
+    return True
 
 def main():
     createAndSeedTables()

@@ -96,7 +96,6 @@ def addToApplied():
 def get_conttable():
     userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
     val =  db.getTableContacts(userid)
-    print(val)
 
     return {"tableData": val } #,
       #"tableColumns":  [
@@ -197,7 +196,6 @@ def get_comptable():
 @token_required
 def get_skilltable():
     userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
-    print(userid)
     val =  db.getTableSkills(userid)
     return {"tableData": val}
 
@@ -219,7 +217,6 @@ def addSkill():
 def updateSkill(skillid):
   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   skill = request.get_json()
-  print(skill)
   wasUpdated = db.updateSkill(skill, userid, int(skillid))
 
   if wasUpdated:
@@ -230,10 +227,12 @@ def updateSkill(skillid):
 @app.route('/skills/<skillid>', methods=['DELETE'])
 @token_required
 def deleteSkill(skillid):
+  print("hello")
   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   wasDeleted = db.deleteSkill(int(skillid))
 
   if wasDeleted:
+    print("Deleted skill with id " + skillid)
     return flask.Response(status=201)
   else:
     return flask.Response(status=403)
@@ -248,6 +247,14 @@ def checklogin():
         token = jwt.encode({'userid': userid, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
         return jsonify({'response': True, 'token': token.decode('UTF-8')})
     return jsonify({'response': False})
+
+@app.route('/usersignup', methods=['POST'])
+def user_signup():
+  sent_info = request.get_json()
+  signupSuccess = db.signup_user(sent_info)
+  if signupSuccess:
+    return jsonify({'response': True})
+  return jsonify({'response': False})
 
 # no endpoint found
 @app.errorhandler(404)
