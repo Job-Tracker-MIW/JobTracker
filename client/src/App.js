@@ -3,7 +3,7 @@ import { makeRenderer, useTable } from "react-table";
 import Sidebar from "./components/Sidebar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import AppliedJobs from "./pages/AppliedJobs/AppliedJobs";
-import Companies from "./pages/Companies";
+import Companies from "./pages/Companies/Companies";
 // import { Companies, CompaniesOne, CompaniesTwo } from "./pages/Companies";
 import Contacts from "./pages/Contacts/Contacts";
 import Skills from "./pages/Skills/Skills";
@@ -52,7 +52,7 @@ function App() {
     return (
       <Router>
       <Switch>
-        <Route path="/" exact component={Login} />
+        <Route path="/" component={() => <Login setToken={setToken}/>}/>
         <Route path="/signup" exact component={Signup} />
       </Switch>
       </Router>
