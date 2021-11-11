@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import './Login.css';
 import jt_logo from "../../assets/jt_logo.png";
+import { Link } from 'react-router-dom';
+import Signup from "../Signup/Signup";
 
 export default class Login extends Component {
     constructor(props) {
@@ -66,7 +68,7 @@ export default class Login extends Component {
                                 <button className="btn btn-primary" onClick={this.submitLogin}>Submit</button>
                             </div>
                             <p class="form-group">
-                                No Login? <a href="#">Sign Up.</a>
+                                No Login? <Link to="/signup">Sign Up.</Link>
                             </p>
                         </form>
                     </div>
