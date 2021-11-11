@@ -54,7 +54,7 @@ export default class Companies extends React.Component {
         {this.state.companies.map(element =>
                     <CompanyRow onRefresh={this.getCompanies} key={element.companyid} {...element}/>
             )}
-            <CompanyAdd onRefresh={this.getCompanies}></CompanyAdd>
+            <CompanyAdd onRefresh={this.getCompanies} ></CompanyAdd>
         </tbody>
       </table>
     </div>

@@ -27,6 +27,14 @@ export default class CompanyRow extends React.Component {
         this.setState({ name: e.target.value});
     }
 
+    handleChangeJobID = (e) => {
+        this.setState({ jobid: e.target.value});
+    }
+
+    handleChangeCompanyID = (e) => {
+        this.setState({ companyid: e.target.value});
+    }
+
     setIsEditing = () => {
         this.setState({isEditing: true});
     };
@@ -41,7 +49,7 @@ export default class CompanyRow extends React.Component {
                 'token': localStorage.getItem('token')
         },
         body: JSON.stringify({"jobid": this.state.jobid,
-        "companyid": this.state.jobid 
+        "companyid": this.state.companyid 
             })
         })
         .then(res => {
