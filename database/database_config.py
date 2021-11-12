@@ -33,7 +33,7 @@ def createAndSeedTables():
     username VARCHAR(50) NOT NULL, password VARCHAR(25) NOT NULL, email VARCHAR(50) NOT NULL)"
     mycursor.execute(sql)
 
-    sql = "CREATE TABLE Companies (companyid INT AUTO_INCREMENT PRIMARY KEY, company VARCHAR(50) NOT NULL)"
+    sql = "CREATE TABLE Companies (companyid INT AUTO_INCREMENT PRIMARY KEY, company VARCHAR(50) NOT NULL) ENGINE=InnoDB AUTO_INCREMENT=1000;"
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
@@ -123,9 +123,9 @@ def createAndSeedTables():
     val = (int(userid), "looks good!", "Software Engineer II", int(companyid2))
     mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-    val = (int(userid), "A start", "Jr. Software Engineer", int(companyid2))
-    mycursor.execute(sql, val)
+    # sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
+    # val = (int(userid), "A start", "Jr. Software Engineer", int(companyid2))
+    # mycursor.execute(sql, val)
 
 
 
@@ -261,29 +261,31 @@ def addCompany(company_attributes, userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    # THE BELOW 9 LINES CHECKS FOR A MATCHING NAME AND THEN GRABS THE ID
-    # HOWEVER, IDK HOW TO CHANGE THE AUTO INCRMENTING ID TO THE
-    # SAME_COMPANY_ID VALUE AS DESCRIBED BELOW. ASLO, THIS SHOULD ALL
-    # BE RECTORED INTO ANOTHER FUNCTION AS SOME POINT. 
-    check_company_name = "SELECT * FROM Companies"
-    cur.execute(check_company_name)
-    check_name = cur.fetchall()
-    co_name = company_attributes["company"]
-
-    same_company_id = ''
-
-    for i in check_name:
-    	if (i['company']) == co_name:
-            same_company_id = i['companyid']
-            print("SAME ID", same_company_id, co_name)
-
-    ###################################################
-
-    #print("COMPANY ATTRIBUTES", company_attributes)
     company = company_attributes["company"]
     title = company_attributes["title"]
     name = 'We Should Get Rid Of This'
 
+    check_company_name = "SELECT * FROM Companies"
+    cur.execute(check_company_name)
+    check_name = cur.fetchall()
+
+    # Check for duplicate company name
+    for i in check_name:
+        same_company_id = ''
+        if (i['company']) == company:
+            same_company_id = i['companyid']
+            # print("SAME ID", same_company_id, company)
+            sql2 = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
+            val2 = (int(userid), name, title, same_company_id)
+            cur.execute(sql2, val2)
+
+            mydb.commit()
+            cur.close()
+            mydb.close()
+
+            return True
+            
+    # When Company Name is unique
     sql = "INSERT INTO Companies (company) VALUES (%s)"
     val = (company,)
     cur.execute(sql, val)
@@ -315,10 +317,8 @@ def deleteCompany(company_attributes, userid):
     print("COMPANY ID", company_id)
     print("JOB ID", job_id)
 
-    # SOMETHING WEIRD IS HAPPENING WHERE THE PREDIFEND VALUES WE ARE POPULATING
-    # THE TABLES WITH ARENT DELETING CORRECTLY. HOWEVER, THEY EVENTUALLY WILL DELETE.
-    # ALSO, WHEN WE ENTER A NEW COMPANY, ALL OF THAT WILL DELETE CORRECTLY THE FIRST
-    # TIME
+    # SOMETHING WEIRD IS HAPPENING WHERE THE DELETE PAGE ISN'T BEING REFRESHED UPON
+    # DELETE SOMETIMES. STILL TRYING TO FIGURE THAT OUT. 
     
     sql = "DELETE FROM Jobs WHERE jobid = %s AND companyid = %s AND userid = %s"
     val = (job_id, company_id, userid)
