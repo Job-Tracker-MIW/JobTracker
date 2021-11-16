@@ -45,7 +45,9 @@ export default class AppliedJobs extends React.Component {
           <tr>
             <th>Title</th>
             <th>Company</th>
+            <th>User defined name</th>
             <th>Application Date</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>

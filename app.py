@@ -89,6 +89,9 @@ def get_jobtable():
 @app.route('/appjobs/<appid>', methods=['PUT'])
 @token_required
 def updateAppJob(appid):
+
+  print('updating ---------------------------------------')
+
   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   application = request.get_json()
 
@@ -104,7 +107,6 @@ def updateAppJob(appid):
 def deleteAppJob(appid):
 
 
-  print('deleting ------------------------')
   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
 
   wasDeleted = db.deleteApplications(int(appid))

@@ -37,7 +37,7 @@ def createAndSeedTables():
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
-    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, companyid INT NOT NULL,\
+    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, companyid INT NOT NULL,  CONSTRAINT job_name UNIQUE (companyid, title, name),\
     FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE, FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
@@ -113,8 +113,6 @@ def createAndSeedTables():
 
 
 
-
-
     sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
     val = (int(userid), "Hope I get it", "Software Engineer I", int(companyid))
     mycursor.execute(sql, val)
@@ -178,7 +176,7 @@ def getTableApplications(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "SELECT a.appid, b.title AS title, c.company AS company, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
+    sql = "SELECT a.appid, b.title AS title, c.company AS company, b.name, a.application_date AS appdt, a.status FROM Applications a LEFT JOIN Jobs b ON " + \
           " a.jobid = b.jobid LEFT JOIN Companies c on b.companyid = c.companyid WHERE a.userid = %s"
     
     cur.execute(sql, (userid,))
@@ -190,23 +188,73 @@ def getTableApplications(userid):
 
 # I just stubbed this for testing the Companies Applied page. we can delete later
 # and use Mat's implementation.
-def addToApplied(userid, applied_attributes, curr_datetime):
+def addToApplied(userid, application, curr_datetime):
+    #mydb = mysql.connector.connect(**config)
+    #cur = mydb.cursor(dictionary=True)
+    #jobid = applied_attributes["jobid"]
+    #application_date = curr_datetime
+    #name = "Another Application 1"
+    #status = "Applied"
+#
+#    sql = """INSERT INTO Applications (userid, jobid, name, status, application_date) 
+#                VALUES (%s, %s, %s, %s, %s)"""
+#
+#    val = (int(userid), int(jobid), name, status, application_date)
+#    cur.execute(sql, val)
+#
+#    mydb.commit()
+#    cur.close()
+#    mydb.close()
+
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
-    jobid = applied_attributes["jobid"]
-    application_date = curr_datetime
-    name = "Another Application 1"
-    status = "Applied"
 
-    sql = """INSERT INTO Applications (userid, jobid, name, status, application_date) 
-                VALUES (%s, %s, %s, %s, %s)"""
+    title = application["title"]
+    company = application["company"]
+    name = application["name"]
+    
+    if 'status' in application.keys():
+        status = application["status"]
+    else: status = 'Applied'
+    #appdt = curr_datetime #parser.parse(application["appdt"])
+    appdt = parser.parse(curr_datetime)
 
-    val = (int(userid), int(jobid), name, status, application_date)
-    cur.execute(sql, val)
+    # need to make sure company exists otherwise should add company
+    sql = "select companyid from Companies where company = %s"
+    cur.execute(sql, (company,))
+    companyid = cur.fetchall()
+    if len(companyid) > 0:
+        companyid = companyid[0]['companyid']
 
-    mydb.commit()
-    cur.close()
-    mydb.close()
+
+        # if job doesn't exist need to add
+        sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
+        cur.execute(sql, (title, companyid, name))
+        jobid = cur.fetchall()
+        if len(jobid) > 0:
+            jobid = jobid[0]['jobid']
+        else:
+            sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
+            val = (int(userid), name, title, int(companyid))
+            cur.execute(sql, val)
+            sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
+            cur.execute(sql, (title, companyid, name))
+            jobid = cur.fetchall()[0]['jobid']
+
+
+
+        sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
+        val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day))
+   
+        cur.execute(sql, val)
+
+
+        mydb.commit()
+        cur.close()
+        mydb.close()
+
+    else: return "Company not found 404", 404
+
 
     return True
 
@@ -413,7 +461,7 @@ def addApplications(application, userid):
     jobid = cur.fetchall()[0]['jobid']
 
     sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(jobid), int(userid), title, "Applied", datetime.date(appdt.year,appdt.month,appdt.day))
+    val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day))
    
     cur.execute(sql, val)
 
@@ -468,18 +516,31 @@ def updateApplications(application, userid, appid):
 
     title = application["title"]
     company = application["company"]
+    name = application["name"]
     appdt = parser.parse(application["appdt"])
+    status = application["status"]
 
     sql = "select companyid from Companies where company = %s"
     cur.execute(sql, (company,))
     companyid = cur.fetchall()[0]['companyid']
 
-    sql = "select jobid from Jobs where title = %s and companyid = %s"
-    cur.execute(sql, (title, companyid))
-    jobid = cur.fetchall()[0]['jobid']
+    sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
+    cur.execute(sql, (title, companyid, name))
+    jobid = cur.fetchall()
+    
+    if len(jobid) > 0:
+        jobid = jobid[0]['jobid']
+    else:
+        sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
+        val = (int(userid), name, title, int(companyid))
+        cur.execute(sql, val)
+        sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
+        cur.execute(sql, (title, companyid, name))
+        jobid = cur.fetchall()[0]['jobid']
+
 
     sql = "UPDATE Applications SET jobid = %s, userid = %s, name = %s, status = %s, application_date = %s where appid = %s"
-    val = (int(jobid), int(userid), title, "Applied", datetime.date(appdt.year,appdt.month,appdt.day), int(appid))
+    val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day), int(appid))
     cur.execute(sql, val)
 
 
