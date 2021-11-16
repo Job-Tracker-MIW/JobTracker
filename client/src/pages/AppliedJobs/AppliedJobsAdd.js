@@ -14,8 +14,9 @@ export default class AppliedJobsAdd extends React.Component {
             company: this.props.company,
             status: this.props.status,
             appdt: this.props.appdt,
-            status: this.props.status,
+            companies: this.props.companies
         }
+        console.log(this.props);
     }
 
     options = [
@@ -28,7 +29,7 @@ export default class AppliedJobsAdd extends React.Component {
     }
 
     handleChangeCompany = (e) => {
-        this.setState({ company: e.target.value});
+        this.setState({ company: e});
     }
 
     handleChangeName = (e) => {
@@ -63,7 +64,6 @@ export default class AppliedJobsAdd extends React.Component {
             "company": this.state.company,
             "status": this.state.status,
             "appdt": this.state.appdt,
-            "status": this.state.status,
 	    })
         })
         .then(res => {
@@ -80,7 +80,7 @@ export default class AppliedJobsAdd extends React.Component {
         return <tr>
             <button onClick={this.setIsAdding} className={this.state.isAdding?  'hidden' : undefined}>Add</button>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeTitle.bind(this)} /></td>
-            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeCompany.bind(this)} /></td>
+            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><Dropdown options={this.props.companies} onChange={this.handleChangeCompany} value={this.props.company} placeholder="Select a company" /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeName.bind(this)} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeAppdt.bind(this)} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><Dropdown options={this.options} onChange={this.handleChangeStatus} value={this.props.status} placeholder="Select a status" /></td>

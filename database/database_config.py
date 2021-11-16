@@ -176,15 +176,31 @@ def getTableApplications(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "SELECT a.appid, b.title AS title, c.company AS company, a.status AS status, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
+    sql = "SELECT a.appid, b.title AS title, c.company AS company, a.name As name, a.status AS status, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
           " a.jobid = b.jobid LEFT JOIN Companies c on b.companyid = c.companyid WHERE a.userid = %s"
     
     cur.execute(sql, (userid,))
 
-    vals = cur.fetchall()
+    jobs = cur.fetchall()
+
+    sql = """SELECT c.company
+            FROM Jobs
+            INNER JOIN Companies as c ON Jobs.companyid = c.companyid
+            WHERE Jobs.userid = %s;"""
+
+    cur.execute(sql, (userid,))
+
+    companies = cur.fetchall()
+
+    companyList = []
+    for c in companies:
+        companyList.append(c["company"])
+
+    for job in jobs:
+        job["companies"] = companyList
 
     mydb.close()
-    return(vals)
+    return(jobs)
 
 # I just stubbed this for testing the Companies Applied page. we can delete later
 # and use Mat's implementation.
@@ -518,12 +534,13 @@ def updateApplications(application, userid, appid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
+    print(application)
+
     title = application["title"]
-    company = application["company"]
+    company = application["company"]["value"]
     name = application["name"]
-    status = application["status"]["value"]
-    appdt = parser.parse(application["appdt"])
     status = application["status"]
+    appdt = parser.parse(application["appdt"])
 
     sql = "select companyid from Companies where company = %s"
     cur.execute(sql, (company,))
