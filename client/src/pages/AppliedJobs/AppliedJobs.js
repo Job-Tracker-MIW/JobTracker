@@ -10,7 +10,6 @@ export default class AppliedJobs extends React.Component {
     this.state = {
       error: null,
       AppliedJobs: [],
-      companies: []
     }
     this.getAppliedJobs();
   }
@@ -24,7 +23,6 @@ export default class AppliedJobs extends React.Component {
       .then(res => res.json())
       .then(
         (result) => {
-          console.log(result.tableData);
           this.setState({
             AppliedJobs: result.tableData
           });
@@ -56,7 +54,7 @@ export default class AppliedJobs extends React.Component {
         {this.state.AppliedJobs.map(element =>
                     <AppliedJobsRow onRefresh={this.getAppliedJobs} key={element.appid} {...element}/>
             )}
-            <AppliedJobsAdd onRefresh={this.getAppliedJobs} {...this.state}></AppliedJobsAdd>
+            <AppliedJobsAdd onRefresh={this.getAppliedJobs} {...this.state.AppliedJobs[0]}></AppliedJobsAdd>
         </tbody>
       </table>
     </div>

@@ -183,7 +183,7 @@ def getTableApplications(userid):
 
     jobs = cur.fetchall()
 
-    sql = """SELECT c.company
+    sql = """SELECT DISTINCT c.company
             FROM Jobs
             INNER JOIN Companies as c ON Jobs.companyid = c.companyid
             WHERE Jobs.userid = %s;"""

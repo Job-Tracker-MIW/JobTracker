@@ -16,7 +16,6 @@ export default class AppliedJobsAdd extends React.Component {
             appdt: this.props.appdt,
             companies: this.props.companies
         }
-        console.log(this.props);
     }
 
     options = [
