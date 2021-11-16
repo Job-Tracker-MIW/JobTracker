@@ -1,6 +1,8 @@
 import React, { } from 'react';
 import '../../styles/tableCSS.css';
-import './AppliedJobs.css'
+import './AppliedJobs.css';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 
 export default class AppliedJobsAdd extends React.Component {
     constructor(props) {
@@ -10,10 +12,16 @@ export default class AppliedJobsAdd extends React.Component {
             title: this.props.title,
             name: this.props.name,
             company: this.props.company,
+            status: this.props.status,
             appdt: this.props.appdt,
             status: this.props.status,
         }
     }
+
+    options = [
+        'Applied', 'Online Assessment', 'Interview Scheduled', 
+        'Rejected', 'Offer Received', 'Accepted'
+      ];
 
     handleChangeTitle = (e) => {
         this.setState({ title: e.target.value});
@@ -39,6 +47,10 @@ export default class AppliedJobsAdd extends React.Component {
         this.setState({isAdding: true});
     };
 
+    handleChangeStatus = (option) => {
+        this.setState({status: option})
+    };
+
     submitRow = () => {
         fetch("/appjobs", {
             method: 'POST',
@@ -49,7 +61,7 @@ export default class AppliedJobsAdd extends React.Component {
             },
             body: JSON.stringify({"title": this.state.title,
             "company": this.state.company,
-            "name": this.state.name,
+            "status": this.state.status,
             "appdt": this.state.appdt,
             "status": this.state.status,
 	    })
@@ -71,7 +83,7 @@ export default class AppliedJobsAdd extends React.Component {
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeCompany.bind(this)} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeName.bind(this)} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeAppdt.bind(this)} /></td>
-            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeStatus.bind(this)} /></td>
+            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><Dropdown options={this.options} onChange={this.handleChangeStatus} value={this.props.status} placeholder="Select a status" /></td>
             <td className={!this.state.isAdding?  'hidden' : undefined}></td>
             <button onClick={this.submitRow} className={!this.state.isAdding ? 'hidden' : undefined}>Submit</button>
             <button onClick={this.cancelAdding} className={!this.state.isAdding ? 'hidden' : undefined}>Cancel</button>

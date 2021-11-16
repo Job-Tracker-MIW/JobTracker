@@ -176,7 +176,7 @@ def getTableApplications(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "SELECT a.appid, b.title AS title, c.company AS company, b.name, a.application_date AS appdt, a.status FROM Applications a LEFT JOIN Jobs b ON " + \
+    sql = "SELECT a.appid, b.title AS title, c.company AS company, a.status AS status, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
           " a.jobid = b.jobid LEFT JOIN Companies c on b.companyid = c.companyid WHERE a.userid = %s"
     
     cur.execute(sql, (userid,))
@@ -444,17 +444,21 @@ def addContact(contact, userid):
 
     return True
 
-def addApplications(application, userid):
+def addApplications(application, userid, curr_date):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
+    print("date type:" +str(type(curr_date)) + curr_date)
+
     title = application["title"]
     company = application["company"]
-    appdt = parser.parse(application["appdt"])
+    status = application["status"]
 
     sql = "select companyid from Companies where company = %s"
     cur.execute(sql, (company,))
     companyid = cur.fetchall()[0]['companyid']
+
+    print("Company id "+str(companyid))
 
     sql = "select jobid from Jobs where title = %s and companyid = %s"
     cur.execute(sql, (title, companyid))
@@ -517,6 +521,7 @@ def updateApplications(application, userid, appid):
     title = application["title"]
     company = application["company"]
     name = application["name"]
+    status = application["status"]["value"]
     appdt = parser.parse(application["appdt"])
     status = application["status"]
 
