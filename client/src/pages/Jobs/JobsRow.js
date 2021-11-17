@@ -1,8 +1,10 @@
 import React, { } from 'react';
 import '../../styles/tableCSS.css';
-import './companies.css'
+import './jobs.css';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 
-export default class CompanyRow extends React.Component {
+export default class JobsRow extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -11,12 +13,22 @@ export default class CompanyRow extends React.Component {
             title: this.props.title,
             name: this.props.name,
             jobid: this.props.jobid,
-            companyid: this.props.companyid
+            companyid: this.props.companyid,
+            skill: this.props.skill
         }
     }
 
+    options = [
+        'Assembly', 'C', 'C++', 'C#', 'Java', 'Javascript', 'Python', 'HTML/CSS', 'Swift', 'R', 
+        'Go', 'Scala', 'PHP', 'SQL', 'Ruby'
+    ]
+
     handleChangeCompany = (e) => {
         this.setState({ company: e.target.value});
+    }
+
+    handleChangeSkill = (e) => {
+        this.setState({ skill: e.value});
     }
 
     handleChangeTitle = (e) => {
@@ -66,7 +78,8 @@ export default class CompanyRow extends React.Component {
             },
             body: JSON.stringify({"company": this.state.company, 
             "title": this.state.title,
-            "name": this.state.name})
+            "name": this.state.name,
+            "skill": this.state.skill})
         })
         .then(res => {
             console.log(res);
@@ -103,6 +116,7 @@ export default class CompanyRow extends React.Component {
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.company} onChange={this.handleChangeCompany.bind(this)} /></td>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.title} onChange={this.handleChangeTitle.bind(this)} /></td>
             <td>{this.props.name}</td>
+            <td onClick={this.setIsEditing}><Dropdown options={this.options} onChange={this.handleChangeSkill} value={this.props.skill} placeholder="Select a language"/></td>
             <button onClick={this.applyForJob} className={this.state.isEditing?  'hidden' : undefined}>Applied</button>
             <button onClick={this.deleteRow} className={this.state.isEditing?  'hidden' : undefined}>Delete</button>
             <button onClick={this.updateRow} className={!this.state.isEditing ? 'hidden' : undefined}>Update</button>

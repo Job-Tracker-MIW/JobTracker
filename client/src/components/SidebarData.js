@@ -15,27 +15,12 @@ export const SidebarData = [
     icon: <FaIcons.FaPhone />,
   },
   {
-    title: "Companies",
-    path: "/companies-page",
+    title: "Jobs",
+    path: "/jobs-page",
     icon: <FaIcons.FaBuilding />,
-  
-    // Maybe will incorporate subgenres of companies? 
-    
-    // subNav: [
-    //   {
-    //     title: "Companies 1",
-    //     path: "/companies/companies1",
-    //     icon: <IoIcons.IoIosPaper />,
-    //   },
-    //   {
-    //     title: "Companies 2",
-    //     path: "/companies/companies1",
-    //     icon: <IoIcons.IoIosPaper />,
-    //   },
-    // ],
   },
   {
-    title: "Skills",
+    title: "Language Skills",
     path: "/skills-page",
     icon: <FaIcons.FaTools />,
   },

@@ -204,7 +204,7 @@ def get_comptable():
             return flask.Response(status=201)
         else:
             # flash("Add NOT Successful")
-            return flask.Response(status=403)
+            return flask.Response(status=403)    
     
     if request.method =='DELETE':
         userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']

@@ -37,7 +37,7 @@ def createAndSeedTables():
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
-    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, companyid INT NOT NULL,  CONSTRAINT job_name UNIQUE (companyid, title, name),\
+    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, skill VARCHAR(25) NOT NULL, companyid INT NOT NULL,  CONSTRAINT job_name UNIQUE (companyid, title, name),\
     FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE, FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
@@ -113,12 +113,12 @@ def createAndSeedTables():
 
 
 
-    sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-    val = (int(userid), "Hope I get it", "Software Engineer I", int(companyid))
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(userid), "Hope I get it", "Software Engineer I", "Javascript", int(companyid))
     mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-    val = (int(userid), "looks good!", "Software Engineer II", int(companyid2))
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(userid), "looks good!", "Software Engineer II", "C", int(companyid2))
     mycursor.execute(sql, val)
 
     # sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
@@ -306,7 +306,7 @@ def getTableCompanies(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = """SELECT Companies.companyid, Companies.company, Jobs.title, Jobs.jobid, Contacts.name
+    sql = """SELECT Companies.companyid, Companies.company, Jobs.title, Jobs.skill, Jobs.jobid, Contacts.name
             FROM Jobs
             INNER JOIN Companies ON Jobs.companyid = Companies.companyid
             LEFT JOIN Contacts ON Companies.companyid = Contacts.companyid
@@ -328,6 +328,7 @@ def addCompany(company_attributes, userid):
     company = company_attributes["company"]
     title = company_attributes["title"]
     name = 'We Should Get Rid Of This'
+    skill = company_attributes["skill"]
 
     check_company_name = "SELECT * FROM Companies"
     cur.execute(check_company_name)
@@ -339,11 +340,32 @@ def addCompany(company_attributes, userid):
         if (i['company']) == company:
             same_company_id = i['companyid']
             # print("SAME ID", same_company_id, company)
-            sql2 = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-            val2 = (int(userid), name, title, same_company_id)
+            sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
+            val2 = (int(userid), name, title, skill, same_company_id)
             cur.execute(sql2, val2)
-
             mydb.commit()
+
+            # check for matching skill and add to JobsSkills if so
+            sql = "SELECT skillid FROM skills where name = %s"
+            val = (skill,)
+            cur.execute(sql,val)
+            skillMatches = cur.fetchall()
+            if len(skillMatches) > 0:
+                skillMatch = skillMatches[0]["skillid"]
+
+            sql = "SELECT jobid FROM jobs where jobs.skill = %s"
+            val = (skill,)
+            cur.execute(sql,val)
+            jobMatches = cur.fetchall()
+            if len(jobMatches) > 0:
+                jobMatch = jobMatches[0]["jobid"]
+            
+            if len(jobMatches) > 0 and len(skillMatches) > 0:
+                sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
+                vals = (int(skillMatch), int(jobMatch))
+                cur.execute(sql, vals)
+                mydb.commit()
+
             cur.close()
             mydb.close()
 
@@ -363,11 +385,32 @@ def addCompany(company_attributes, userid):
     vals = cur.fetchone()
     companyid = int(vals['companyid'])
 
-    sql2 = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-    val2 = (int(userid), name, title, companyid)
+    sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
+    val2 = (int(userid), name, title, skill, companyid)
     cur.execute(sql2, val2)
-
     mydb.commit()
+
+    # check for matching skill and add to JobsSkills if so
+    sql = "SELECT skillid FROM skills where name = %s"
+    val = (skill,)
+    cur.execute(sql,val)
+    skillMatches = cur.fetchall()
+    if len(skillMatches) > 0:
+        skillMatch = skillMatches[0]["skillid"]
+
+    sql = "SELECT jobid FROM jobs where jobs.skill = %s"
+    val = (skill,)
+    cur.execute(sql,val)
+    jobMatches = cur.fetchall()
+    if len(jobMatches) > 0:
+        jobMatch = jobMatches[0]["jobid"]
+    
+    if len(jobMatches) > 0 and len(skillMatches) > 0:
+        sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
+        vals = (int(skillMatch), int(jobMatch))
+        cur.execute(sql, vals)
+        mydb.commit()
+
     cur.close()
     mydb.close()
 
@@ -386,6 +429,10 @@ def deleteCompany(company_attributes, userid):
     
     sql = "DELETE FROM Jobs WHERE jobid = %s AND companyid = %s AND userid = %s"
     val = (job_id, company_id, userid)
+    cur.execute(sql, val)
+
+    sql = "DELETE FROM JobsSkills WHERE jobid = %s"
+    val = (job_id,)
     cur.execute(sql, val)
 
     sql_2 = "DELETE FROM Applications WHERE jobid = %s AND userid = %s"
