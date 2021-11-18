@@ -37,7 +37,7 @@ export default class Jobs extends React.Component {
   }
 
   render() {
-    return <div className='table-container'>
+    return <div className='table-container' id ="page-content">
       <div className='title'>
           <h1 className="h1">Jobs</h1>
       </div>

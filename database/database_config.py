@@ -37,12 +37,17 @@ def createAndSeedTables():
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
-    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, skill VARCHAR(25) NOT NULL, companyid INT NOT NULL,  CONSTRAINT job_name UNIQUE (companyid, title, name),\
+    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, skill VARCHAR(25) NOT NULL, companyid INT NOT NULL, CONSTRAINT job_name UNIQUE (companyid, title, name),\
     FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE, FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
+    # sql = "CREATE TABLE Applications (appid INT AUTO_INCREMENT PRIMARY KEY,\
+    # jobid INT NOT NULL, userid INT NOT NULL, name VARCHAR(50) NOT NULL, status VARCHAR(50) NOT NULL, application_date DATE NOT NULL,\
+    # FOREIGN KEY(jobid) REFERENCES Jobs(jobid) ON DELETE CASCADE, FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE)"
+    # mycursor.execute(sql)
+
     sql = "CREATE TABLE Applications (appid INT AUTO_INCREMENT PRIMARY KEY,\
-    jobid INT NOT NULL, userid INT NOT NULL, name VARCHAR(50) NOT NULL, status VARCHAR(50) NOT NULL, application_date DATE NOT NULL,\
+    jobid INT NOT NULL, userid INT NOT NULL, name VARCHAR(50) NOT NULL, status VARCHAR(50) NOT NULL, application_date VARCHAR(50) NOT NULL,\
     FOREIGN KEY(jobid) REFERENCES Jobs(jobid) ON DELETE CASCADE, FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
@@ -121,12 +126,6 @@ def createAndSeedTables():
     val = (int(userid), "looks good!", "Software Engineer II", "C", int(companyid2))
     mycursor.execute(sql, val)
 
-    # sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-    # val = (int(userid), "A start", "Jr. Software Engineer", int(companyid2))
-    # mycursor.execute(sql, val)
-
-
-
     sql = "select jobid from Jobs"
     mycursor.execute(sql)
     val = mycursor.fetchone()
@@ -134,14 +133,12 @@ def createAndSeedTables():
     jobid = val[0]
     jobid2 = val2[0]
 
-    sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(jobid), int(userid), "First Application", "Applied", datetime.date(2021,10,1))
-    mycursor.execute(sql, val)
+    # APPLICTIONS SHOULD UPDATE WHEN "APPLIED" IS HIT ON JOBS PAGE. FEEL FREE TO DELETE THE INSERT IF APPROVED
 
-    sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(jobid2), int(userid), "Second Application", "Applied", datetime.date(2021,10,10))
-    mycursor.execute(sql, val)
-
+    # sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
+    # # val = (int(jobid), int(userid), "First Application", "Applied", datetime.date(2021,10,1))
+    # val = (int(jobid), int(userid), "First Application", "Applied", '11/01/21')
+    # mycursor.execute(sql, val)
 
     sql = "select skillid from Skills"
     mycursor.execute(sql)
@@ -176,34 +173,37 @@ def getTableApplications(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = "SELECT a.appid, b.title AS title, c.company AS company, a.name As name, a.status AS status, a.application_date AS appdt FROM Applications a LEFT JOIN Jobs b ON " + \
-          " a.jobid = b.jobid LEFT JOIN Companies c on b.companyid = c.companyid WHERE a.userid = %s"
+    sql = """SELECT Applications.appid, Jobs.title, Companies.company, Jobs.name AS name, Applications.application_date AS appdt, Applications.status
+		FROM Applications
+		INNER JOIN Jobs ON Applications.jobid = Jobs.jobid
+		INNER JOIN Companies ON Jobs.companyid = Companies.companyid
+		LEFT JOIN Contacts ON Companies.companyid = Contacts.companyid
+		WHERE Jobs.userid = %s;
+    """
     
     cur.execute(sql, (userid,))
 
     jobs = cur.fetchall()
 
-    sql = """SELECT DISTINCT c.company
-            FROM Jobs
-            INNER JOIN Companies as c ON Jobs.companyid = c.companyid
-            WHERE Jobs.userid = %s;"""
+    # sql = """SELECT DISTINCT c.company
+    #         FROM Jobs
+    #         INNER JOIN Companies as c ON Jobs.companyid = c.companyid
+    #         WHERE Jobs.userid = %s;"""
 
-    cur.execute(sql, (userid,))
+    # cur.execute(sql, (userid,))
 
-    companies = cur.fetchall()
+    # companies = cur.fetchall()
 
-    companyList = []
-    for c in companies:
-        companyList.append(c["company"])
+    # companyList = []
+    # for c in companies:
+    #     companyList.append(c["company"])
 
-    for job in jobs:
-        job["companies"] = companyList
+    # for job in jobs:
+    #     job["companies"] = companyList
 
     mydb.close()
     return(jobs)
 
-# I just stubbed this for testing the Companies Applied page. we can delete later
-# and use Mat's implementation.
 def addToApplied(userid, application, curr_datetime):
 
     mydb = mysql.connector.connect(**config)
@@ -211,13 +211,14 @@ def addToApplied(userid, application, curr_datetime):
 
     title = application["title"]
     company = application["company"]
-    name = application["name"]
+    name = application["userDefName"]
     
     if 'status' in application.keys():
         status = application["status"]
     else: status = 'Applied'
     #appdt = curr_datetime #parser.parse(application["appdt"])
-    appdt = parser.parse(curr_datetime)
+    # appdt = parser.parse(curr_datetime)
+    appdt = (curr_datetime)
 
     # need to make sure company exists otherwise should add company
     sql = "select companyid from Companies where company = %s"
@@ -244,7 +245,8 @@ def addToApplied(userid, application, curr_datetime):
 
 
         sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
-        val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day))
+        # val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day))
+        val = (int(jobid), int(userid), name, status, curr_datetime)
    
         cur.execute(sql, val)
 
@@ -296,6 +298,18 @@ def getTableCompanies(userid):
             LEFT JOIN Contacts ON Companies.companyid = Contacts.companyid
             WHERE Jobs.userid = %s;"""
             # ORDER BY Companies.company;"""
+    
+    # THIS BELOW ALMOST WORKS, BUT NOT QUITE. WONT RETURN THE ADDED JOB TO THE TABLE BUT WILL CORRECTLY REMOVE A JOB
+    # THAT HAS BEEN APPLIED TO
+
+    # sql = """SELECT Companies.companyid, Companies.company, Jobs.title, Jobs.name as userDefName, Jobs.jobid, Contacts.name, Applications.status, Users.userid
+	# 		FROM Applications
+    #         RIGHT JOIN Jobs ON Applications.jobid = Jobs.jobid
+    #         RIGHT JOIN Companies ON Jobs.companyid = Companies.companyid
+    #         RIGHT JOIN Contacts ON Companies.companyid = Contacts.companyid
+    #         RIGHt JOIN Users ON Contacts.userid = Users.userid
+	# 		WHERE Applications.status IS NULL OR Applications.status != 'Applied' AND Users.userid = %s;
+    # """
 
     cur.execute(sql, (userid,))
 
@@ -504,6 +518,10 @@ def addApplications(application, userid, curr_date):
     company = application["company"]
     status = application["status"]
 
+    #isaac added
+    name = application["name"]
+    status = application["status"]
+
     sql = "select companyid from Companies where company = %s"
     cur.execute(sql, (company,))
     companyid = cur.fetchall()[0]['companyid']
@@ -515,7 +533,8 @@ def addApplications(application, userid, curr_date):
     jobid = cur.fetchall()[0]['jobid']
 
     sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day))
+    # val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day))
+    val = (int(jobid), int(userid), name, status, curr_date)
    
     cur.execute(sql, val)
 

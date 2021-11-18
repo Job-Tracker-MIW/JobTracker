@@ -26,18 +26,28 @@ const NavIcon = styled(Link)`
   justify-content: center;
   align-items: center;
 `;
+
+const NavIconX = styled(Link)`
+  margin-left: 2rem;
+  margin-right: 2rem;
+  font-size: 2rem;
+  height: 80px;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+`;
   
 // Sidebar properties
 const SidebarNav = styled.nav`
   background: #1e90ff;
-  width: 250px;
+  width: 230px;
   height: 100vh;
   display: flex;
   justify-content: center;
   position: fixed;
   top: 0;
   left: ${({ sidebar }) => (sidebar ? "0" : "-100%")};
-  transition: 350ms;
+  transition: .3s ease-in-out;
   z-index: 10;
 `;
   
@@ -87,7 +97,6 @@ const Sidebar = (props) => {
     props.setToken(0);
   };
 
-
   return (
      
       <>
@@ -124,9 +133,24 @@ const Sidebar = (props) => {
         </SidebarWrap>
       </SidebarNav>
 
-    </IconContext.Provider></>
+        <SidebarNav sidebar={sidebar} onClick={showSidebar}>
+          <SidebarWrap>
+            {/* close out sidebar X */}
+            <NavIconX to="#">
+              <FaIcons.FaTimes onClick={showSidebar} />
+            </NavIconX>
+            {SidebarData.map((item, index) => {
+              return <SubMenu item={item} key={index} />;
+            })}
+          </SidebarWrap>
+        </SidebarNav>
+      </IconContext.Provider>
+      
+      </>
    
   );
+  
 };
+
   
 export default Sidebar;
