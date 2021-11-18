@@ -194,8 +194,10 @@ def get_comptable():
         return {"tableData": val}
     
     if request.method =='POST':
+
         userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
         company_attributes = request.get_json()
+        print("here 2", company_attributes)
         wasAdded = db.addCompany(company_attributes, userid)
 
         if wasAdded:

@@ -47,6 +47,7 @@ export default class Jobs extends React.Component {
           <tr>
             <th>Company</th>
             <th>Job Title</th>
+            <th>User Defined Name</th>
             <th>Contact</th>
             <th>Language Skill</th>
           </tr>
