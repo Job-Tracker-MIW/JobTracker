@@ -205,22 +205,6 @@ def getTableApplications(userid):
 # I just stubbed this for testing the Companies Applied page. we can delete later
 # and use Mat's implementation.
 def addToApplied(userid, application, curr_datetime):
-    #mydb = mysql.connector.connect(**config)
-    #cur = mydb.cursor(dictionary=True)
-    #jobid = applied_attributes["jobid"]
-    #application_date = curr_datetime
-    #name = "Another Application 1"
-    #status = "Applied"
-#
-#    sql = """INSERT INTO Applications (userid, jobid, name, status, application_date) 
-#                VALUES (%s, %s, %s, %s, %s)"""
-#
-#    val = (int(userid), int(jobid), name, status, application_date)
-#    cur.execute(sql, val)
-#
-#    mydb.commit()
-#    cur.close()
-#    mydb.close()
 
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -306,7 +290,7 @@ def getTableCompanies(userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    sql = """SELECT Companies.companyid, Companies.company, Jobs.title, Jobs.skill, Jobs.jobid, Contacts.name
+    sql = """SELECT Companies.companyid, Companies.company, Jobs.title, Jobs.skill, Jobs.jobid, Jobs.name as userDefName, Contacts.name
             FROM Jobs
             INNER JOIN Companies ON Jobs.companyid = Companies.companyid
             LEFT JOIN Contacts ON Companies.companyid = Contacts.companyid
@@ -328,6 +312,8 @@ def addCompany(company_attributes, userid):
     company = company_attributes["company"]
     title = company_attributes["title"]
     name = 'We Should Get Rid Of This'
+    userDefName = company_attributes["userDefName"]
+
     skill = company_attributes["skill"]
 
     check_company_name = "SELECT * FROM Companies"
@@ -341,19 +327,19 @@ def addCompany(company_attributes, userid):
             same_company_id = i['companyid']
             # print("SAME ID", same_company_id, company)
             sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
-            val2 = (int(userid), name, title, skill, same_company_id)
+            val2 = (int(userid), userDefName, title, skill, same_company_id)
             cur.execute(sql2, val2)
             mydb.commit()
 
             # check for matching skill and add to JobsSkills if so
-            sql = "SELECT skillid FROM skills where name = %s"
+            sql = "SELECT skillid FROM Skills where name = %s"
             val = (skill,)
             cur.execute(sql,val)
             skillMatches = cur.fetchall()
             if len(skillMatches) > 0:
                 skillMatch = skillMatches[0]["skillid"]
 
-            sql = "SELECT jobid FROM jobs where jobs.skill = %s"
+            sql = "SELECT jobid FROM Jobs where Jobs.skill = %s"
             val = (skill,)
             cur.execute(sql,val)
             jobMatches = cur.fetchall()
@@ -386,19 +372,19 @@ def addCompany(company_attributes, userid):
     companyid = int(vals['companyid'])
 
     sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
-    val2 = (int(userid), name, title, skill, companyid)
+    val2 = (int(userid), userDefName, title, skill, companyid)
     cur.execute(sql2, val2)
     mydb.commit()
 
     # check for matching skill and add to JobsSkills if so
-    sql = "SELECT skillid FROM skills where name = %s"
+    sql = "SELECT skillid FROM Skills where name = %s"
     val = (skill,)
     cur.execute(sql,val)
     skillMatches = cur.fetchall()
     if len(skillMatches) > 0:
         skillMatch = skillMatches[0]["skillid"]
 
-    sql = "SELECT jobid FROM jobs where jobs.skill = %s"
+    sql = "SELECT jobid FROM Jobs where jobs.skill = %s"
     val = (skill,)
     cur.execute(sql,val)
     jobMatches = cur.fetchall()
@@ -421,14 +407,15 @@ def deleteCompany(company_attributes, userid):
     cur = mydb.cursor(dictionary=True)
     company_id = int(company_attributes["companyid"])
     job_id = int(company_attributes["jobid"])
+    userDefName = company_attributes["userDefName"]
     print("COMPANY ID", company_id)
     print("JOB ID", job_id)
 
     # SOMETHING WEIRD IS HAPPENING WHERE THE DELETE PAGE ISN'T BEING REFRESHED UPON
     # DELETE SOMETIMES. STILL TRYING TO FIGURE THAT OUT. 
     
-    sql = "DELETE FROM Jobs WHERE jobid = %s AND companyid = %s AND userid = %s"
-    val = (job_id, company_id, userid)
+    sql = "DELETE FROM Jobs WHERE jobid = %s AND companyid = %s AND userid = %s and name = %s"
+    val = (job_id, company_id, userid, userDefName)
     cur.execute(sql, val)
 
     sql = "DELETE FROM JobsSkills WHERE jobid = %s"

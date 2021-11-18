@@ -93,11 +93,12 @@ export default class AppliedJobsRow extends React.Component {
         this.setState({isEditing: false});
     }
   
+
     render() {
         return <tr>
-            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.title} onChange={this.handleChangeTitle.bind(this)} /></td>
-            <td onClick={this.setIsEditing}><Dropdown options={this.props.companies} onChange={this.handleChangeCompany} value={this.props.company} placeholder="Select a company" /></td>
-            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.name} onChange={this.handleChangeName.bind(this)} /></td>
+            <td onClick={this.setIsEditing}><input type="text" disabled defaultValue={this.props.title} onChange={this.handleChangeTitle.bind(this)} /></td> 
+            <td onClick={this.setIsEditing}><input type="text" disabled  defaultValue={this.props.company} onChange={this.handleChangeCompany} /></td>
+            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.name} disabled onChange={this.handleChangeName.bind(this)} /></td>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.appdt} onChange={this.handleChangeAppdt.bind(this)} /></td>
             <td onClick={this.setIsEditing}><Dropdown options={this.options} onChange={this.handleChangeStatus} value={this.props.status} placeholder="Select a status" /></td>
             <button onClick={this.deleteRow} className={!this.state.isEditing?  'hidden' : undefined}>Delete</button>
