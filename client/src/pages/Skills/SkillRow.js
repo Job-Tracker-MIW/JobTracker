@@ -1,6 +1,8 @@
 import React, { } from 'react';
 import '../../styles/tableCSS.css';
-import './skills.css'
+import './skills.css';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 
 export default class SkillRow extends React.Component {
     constructor(props) {
@@ -12,8 +14,13 @@ export default class SkillRow extends React.Component {
         }
     }
 
+    options = [
+        'Assembly', 'C', 'C++', 'C#', 'Java', 'Javascript', 'Python', 'HTML/CSS', 'Swift', 'R', 
+        'Go', 'Scala', 'PHP', 'SQL', 'Ruby'
+    ]
+
     handleChangeSkill = (e) => {
-        this.setState({ skill: e.target.value});
+        this.setState({ skill: e.value});
     }
 
     handleChangePro = (e) => {
@@ -56,7 +63,7 @@ export default class SkillRow extends React.Component {
   
     render() {
         return <tr>
-            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.skill} onChange={this.handleChangeSkill.bind(this)} /></td>
+            <td onClick={this.setIsEditing}><Dropdown options={this.options} onChange={this.handleChangeSkill} value={this.props.skill} placeholder="Select a language"/></td>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.pro} onChange={this.handleChangePro.bind(this)} /></td>
             <td>{this.props.jobMatch}</td>
             <button onClick={this.deleteRow}>Delete</button>

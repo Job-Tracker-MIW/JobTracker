@@ -2,14 +2,15 @@ import React, { } from 'react';
 import '../../styles/tableCSS.css';
 import AppliedJobsAdd from './AppliedJobsAdd';
 import AppliedJobsRow from './AppliedJobsRow';
-import './AppliedJobs.css'
+import './AppliedJobs.css';
+import { Link } from 'react-router-dom';
 
 export default class AppliedJobs extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       error: null,
-      AppliedJobs: []
+      AppliedJobs: [],
     }
     this.getAppliedJobs();
   }
@@ -54,7 +55,7 @@ export default class AppliedJobs extends React.Component {
         {this.state.AppliedJobs.map(element =>
                     <AppliedJobsRow onRefresh={this.getAppliedJobs} key={element.appid} {...element}/>
             )}
-            <AppliedJobsAdd onRefresh={this.getAppliedJobs}></AppliedJobsAdd>
+            <Link to="/jobs-page"><button>Add</button></Link>
         </tbody>
       </table>
     </div>

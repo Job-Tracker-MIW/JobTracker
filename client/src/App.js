@@ -3,7 +3,7 @@ import { makeRenderer, useTable } from "react-table";
 import Sidebar from "./components/Sidebar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import AppliedJobs from "./pages/AppliedJobs/AppliedJobs";
-import Companies from "./pages/Companies/Companies";
+import Jobs from "./pages/Jobs/Jobs";
 // import { Companies, CompaniesOne, CompaniesTwo } from "./pages/Companies";
 import Contacts from "./pages/Contacts/Contacts";
 import Skills from "./pages/Skills/Skills";
@@ -66,7 +66,7 @@ function App() {
         <Route path="/" exact component={AppliedJobs} /> {/* the home page */}
         <Route path="/applied-jobs-page" exact component={AppliedJobs} />
         <Route path="/contacts-page" exact component={Contacts} />
-        <Route path="/companies-page" exact component={Companies} />
+        <Route path="/jobs-page" exact component={Jobs} />
         <Route path="/skills-page" exact component={Skills} />
         <Route path="/login-page" exact component={Login} />
         <Route path="/signup" exact component={Signup} />

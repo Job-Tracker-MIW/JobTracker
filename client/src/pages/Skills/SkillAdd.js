@@ -1,6 +1,8 @@
 import React, { } from 'react';
 import '../../styles/tableCSS.css';
-import './skills.css'
+import './skills.css';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 
 export default class SkillAdd extends React.Component {
     constructor(props) {
@@ -13,12 +15,17 @@ export default class SkillAdd extends React.Component {
     }
 
     handleChangeSkill = (e) => {
-        this.setState({ skill: e.target.value});
+        this.setState({ skill: e.value});
     }
 
     handleChangePro = (e) => {
         this.setState({ pro: e.target.value});
     }
+
+    options = [
+        'Assembly', 'C', 'C++', 'C#', 'Java', 'Javascript', 'Python', 'HTML/CSS', 'Swift', 'R', 
+        'Go', 'Scala', 'PHP', 'SQL', 'Ruby'
+    ]
 
     setIsAdding = () => {
         this.setState({isAdding: true});
@@ -36,7 +43,6 @@ export default class SkillAdd extends React.Component {
             "proficiency": this.state.pro})
         })
         .then(res => {
-            console.log(res);
             this.setState({isAdding: false});
             this.props.onRefresh()});
     }
@@ -48,7 +54,7 @@ export default class SkillAdd extends React.Component {
     render() {
         return <tr>
             <button onClick={this.setIsAdding} className={this.state.isAdding?  'hidden' : undefined}>Add</button>
-            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeSkill.bind(this)} /></td>
+            <td onClick={this.setIsEditing} className={!this.state.isAdding ? 'hidden' : undefined}><Dropdown options={this.options} onChange={this.handleChangeSkill} value={this.props.skill} placeholder="Select a language"/></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangePro.bind(this)} /></td>
             <td className={!this.state.isAdding?  'hidden' : undefined}></td>
             <button onClick={this.submitRow} className={!this.state.isAdding ? 'hidden' : undefined}>Submit</button>

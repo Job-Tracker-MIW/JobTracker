@@ -1,11 +1,11 @@
 import React, { } from 'react';
 import '../../styles/tableCSS.css';
-import CompanyAdd from './CompanyAdd';
-import CompanyRow from './CompanyRow';
-import './companies.css'
+import JobsAdd from './JobsAdd';
+import JobsRow from './JobsRow';
+import './jobs.css'
 
 // check companies class
-export default class Companies extends React.Component {
+export default class Jobs extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -39,7 +39,7 @@ export default class Companies extends React.Component {
   render() {
     return <div className='table-container'>
       <div className='title'>
-          <h1 className="h1">Companies</h1>
+          <h1 className="h1">Jobs</h1>
       </div>
 
       <table class="center">
@@ -48,13 +48,14 @@ export default class Companies extends React.Component {
             <th>Company</th>
             <th>Job Title</th>
             <th>Contact</th>
+            <th>Language Skill</th>
           </tr>
         </thead>
         <tbody>
         {this.state.companies.map(element =>
-                    <CompanyRow onRefresh={this.getCompanies} key={element.companyid} {...element}/>
+                    <JobsRow onRefresh={this.getCompanies} key={element.companyid} {...element}/>
             )}
-            <CompanyAdd onRefresh={this.getCompanies} ></CompanyAdd>
+            <JobsAdd onRefresh={this.getCompanies} ></JobsAdd>
         </tbody>
       </table>
     </div>

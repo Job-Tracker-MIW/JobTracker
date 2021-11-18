@@ -65,13 +65,7 @@ def get_jobtable():
 
     print('appget', val)
     return {"tableData": 
-        val}#,
-       #     "tableColumns":  [
-       # {'Header': 'Title', 'accessor': 'title'},
-       # {'Header': 'Company', 'accessor': "company"},
-       # {'Header': "Application Date",'accessor': "appdt"}
-       # ],
-     # }
+        val}
 
 # @app.route('/appjobs', methods=['POST'])
 # @token_required
@@ -143,15 +137,7 @@ def get_conttable():
     userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
     val =  db.getTableContacts(userid)
 
-    return {"tableData": val } #,
-      #"tableColumns":  [
-      #  {'Header': 'Contact', 'accessor': 'contact'},
-      #  {'Header': 'E-Mail', 'accessor': 'email'},
-      #  {'Header': 'Phone', 'accessor': 'phone'},
-      #  {'Header': 'Companies', 'accessor': "company"},
-      #  {'Header': "Job Matches",'accessor': "jobCount"}
-      #  ],
-      #}
+    return {"tableData": val }
 
 
 @app.route('/contacts', methods=['POST'])
@@ -218,7 +204,7 @@ def get_comptable():
             return flask.Response(status=201)
         else:
             # flash("Add NOT Successful")
-            return flask.Response(status=403)
+            return flask.Response(status=403)    
     
     if request.method =='DELETE':
         userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']

@@ -38,7 +38,7 @@ export default class Skills extends React.Component {
   render() {
     return <div className='table-container'>
       <div className='title'>
-          <h1 className="h1">Skills</h1>
+          <h1 className="h1">Language Skills</h1>
       </div>
       <table class="center">
         <thead>
