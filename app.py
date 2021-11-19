@@ -125,7 +125,9 @@ def addToApplied():
 
     wasAdded = db.addToApplied(userid, applied_attributes, curr_datetime)
 
-    if wasAdded:
+    update_jobs = db.updateJobApplied(userid, applied_attributes)
+
+    if wasAdded and update_jobs:
         return flask.Response(status=201)
     else:
         return flask.Response(status=403)

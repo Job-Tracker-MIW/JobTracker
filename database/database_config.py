@@ -37,7 +37,7 @@ def createAndSeedTables():
     mycursor.execute(sql)
 
     sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
-    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, skill VARCHAR(25) NOT NULL, companyid INT NOT NULL, CONSTRAINT job_name UNIQUE (companyid, title, name),\
+    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, job_status VARCHAR(50), skill VARCHAR(25) NOT NULL, companyid INT NOT NULL, CONSTRAINT job_name UNIQUE (companyid, title, name),\
     FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE, FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
@@ -118,12 +118,12 @@ def createAndSeedTables():
 
 
 
-    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(userid), "Hope I get it", "Software Engineer I", "Javascript", int(companyid))
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (int(userid), "Hope I get it", "Software Engineer I", "Javascript", int(companyid), 'Not Applied')
     mycursor.execute(sql, val)
 
-    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(userid), "looks good!", "Software Engineer II", "C", int(companyid2))
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (int(userid), "looks good!", "Software Engineer II", "C", int(companyid2), 'Not Applied')
     mycursor.execute(sql, val)
 
     sql = "select jobid from Jobs"
@@ -185,21 +185,21 @@ def getTableApplications(userid):
 
     jobs = cur.fetchall()
 
-    # sql = """SELECT DISTINCT c.company
-    #         FROM Jobs
-    #         INNER JOIN Companies as c ON Jobs.companyid = c.companyid
-    #         WHERE Jobs.userid = %s;"""
+    sql = """SELECT DISTINCT c.company
+            FROM Jobs
+            INNER JOIN Companies as c ON Jobs.companyid = c.companyid
+            WHERE Jobs.userid = %s;"""
 
-    # cur.execute(sql, (userid,))
+    cur.execute(sql, (userid,))
 
-    # companies = cur.fetchall()
+    companies = cur.fetchall()
 
-    # companyList = []
-    # for c in companies:
-    #     companyList.append(c["company"])
+    companyList = []
+    for c in companies:
+        companyList.append(c["company"])
 
-    # for job in jobs:
-    #     job["companies"] = companyList
+    for job in jobs:
+        job["companies"] = companyList
 
     mydb.close()
     return(jobs)
@@ -296,20 +296,8 @@ def getTableCompanies(userid):
             FROM Jobs
             INNER JOIN Companies ON Jobs.companyid = Companies.companyid
             LEFT JOIN Contacts ON Companies.companyid = Contacts.companyid
-            WHERE Jobs.userid = %s;"""
-            # ORDER BY Companies.company;"""
-    
-    # THIS BELOW ALMOST WORKS, BUT NOT QUITE. WONT RETURN THE ADDED JOB TO THE TABLE BUT WILL CORRECTLY REMOVE A JOB
-    # THAT HAS BEEN APPLIED TO
-
-    # sql = """SELECT Companies.companyid, Companies.company, Jobs.title, Jobs.name as userDefName, Jobs.jobid, Contacts.name, Applications.status, Users.userid
-	# 		FROM Applications
-    #         RIGHT JOIN Jobs ON Applications.jobid = Jobs.jobid
-    #         RIGHT JOIN Companies ON Jobs.companyid = Companies.companyid
-    #         RIGHT JOIN Contacts ON Companies.companyid = Contacts.companyid
-    #         RIGHt JOIN Users ON Contacts.userid = Users.userid
-	# 		WHERE Applications.status IS NULL OR Applications.status != 'Applied' AND Users.userid = %s;
-    # """
+            WHERE Jobs.job_status = 'Not Applied' AND Jobs.userid = %s
+    """
 
     cur.execute(sql, (userid,))
 
@@ -339,9 +327,10 @@ def addCompany(company_attributes, userid):
         same_company_id = ''
         if (i['company']) == company:
             same_company_id = i['companyid']
+            job_status = 'Not Applied'
             # print("SAME ID", same_company_id, company)
-            sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
-            val2 = (int(userid), userDefName, title, skill, same_company_id)
+            sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+            val2 = (int(userid), userDefName, title, skill, same_company_id, job_status)
             cur.execute(sql2, val2)
             mydb.commit()
 
@@ -385,8 +374,10 @@ def addCompany(company_attributes, userid):
     vals = cur.fetchone()
     companyid = int(vals['companyid'])
 
-    sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
-    val2 = (int(userid), userDefName, title, skill, companyid)
+    job_status = 'Not Applied'
+
+    sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val2 = (int(userid), userDefName, title, skill, companyid, job_status)
     cur.execute(sql2, val2)
     mydb.commit()
 
@@ -439,6 +430,45 @@ def deleteCompany(company_attributes, userid):
     sql_2 = "DELETE FROM Applications WHERE jobid = %s AND userid = %s"
     val_2 = (job_id, userid)
     cur.execute(sql_2, val_2)
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+def updateJobApplied(userid, applied_attributes):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    job_id = applied_attributes["jobid"]
+    print("JOB ID", job_id)
+
+    set_as_applied = 'Applied'
+
+    sql = "UPDATE Jobs SET job_status = %s WHERE jobid = %s"
+    val = (set_as_applied, job_id)
+
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+    
+    return True
+
+def updateSkill(skill, userid, skillid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    name = skill["name"]
+    prof = int(skill['proficiency'])
+
+    sql = "UPDATE Skills SET userid = %s, name = %s, proficiency = %s where skillid = %s"
+    val = (userid, name, prof, skillid)
+    cur.execute(sql, val)
+
 
     mydb.commit()
     cur.close()
