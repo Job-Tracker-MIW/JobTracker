@@ -39,6 +39,7 @@ const DropdownLink = styled(Link)`
     cursor: pointer;
   }
 `;
+
   
 const SubMenu = ({ item }) => {
   const [subnav, setSubnav] = useState(false);
@@ -61,7 +62,7 @@ const SubMenu = ({ item }) => {
             : null}
         </div>
       </SidebarLink>
-      {subnav &&
+      {/* {subnav &&
         item.subNav.map((item, index) => {
           return (
             <DropdownLink to={item.path} key={index}>
@@ -69,7 +70,7 @@ const SubMenu = ({ item }) => {
               <SidebarLabel>{item.title}</SidebarLabel>
             </DropdownLink>
           );
-        })}
+        })} */}
     </>
   );
 };

@@ -121,6 +121,8 @@ def addToApplied():
     today = date.today()
     curr_datetime = today.strftime("%m/%d/%y")
 
+    print("Applied Attributes", applied_attributes, "DATETIME", curr_datetime)
+
     wasAdded = db.addToApplied(userid, applied_attributes, curr_datetime)
 
     if wasAdded:
