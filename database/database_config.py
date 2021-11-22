@@ -21,12 +21,14 @@ def createAndSeedTables():
     # drop tables
 
     mycursor.execute("DROP TABLE IF EXISTS JobsSkills")
+    mycursor.execute("DROP TABLE IF EXISTS SkillLinks")
     mycursor.execute("DROP TABLE IF EXISTS Applications")
     mycursor.execute("DROP TABLE IF EXISTS Skills")
     mycursor.execute("DROP TABLE IF EXISTS Jobs")
     mycursor.execute("DROP TABLE IF EXISTS Contacts")
     mycursor.execute("DROP TABLE IF EXISTS Users")
     mycursor.execute("DROP TABLE IF EXISTS Companies")
+
 
     # create tables
     sql = "CREATE TABLE Users (userid INT AUTO_INCREMENT PRIMARY KEY,\
@@ -64,6 +66,10 @@ def createAndSeedTables():
     sql = "CREATE TABLE Contacts (contactid INT AUTO_INCREMENT PRIMARY KEY,\
     userid INT NOT NULL, name VARCHAR(50), companyid INT, email VARCHAR(50), phone VARCHAR(15),\
     FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE, FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
+    mycursor.execute(sql)
+
+    sql = "CREATE TABLE SkillLinks (linkid INT AUTO_INCREMENT PRIMARY KEY,\
+    skillid INT NOT NULL, reslabel VARCHAR(200) NOT NULL, reslink VARCHAR(200) NOT NULL, FOREIGN KEY(skillid) REFERENCES Skills(skillid) ON DELETE CASCADE)"
     mycursor.execute(sql)
 
 
@@ -143,11 +149,22 @@ def createAndSeedTables():
     sql = "select skillid from Skills"
     mycursor.execute(sql)
     val = mycursor.fetchone()
+    valB = mycursor.fetchone()
     skillid = val[0]
+    skillidB = valB[0]
 
     sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
     val = (int(skillid), int(jobid))
     mycursor.execute(sql, val)
+
+    sql = "INSERT INTO SkillLinks (skillid, reslabel, reslink) VALUES (%s, %s, %s)"
+    val = (int(skillid), "MDN JavaScript Basics", "https://developer.mozilla.org/en-US")
+    mycursor.execute(sql, val)
+
+    sql = "INSERT INTO SkillLinks (skillid, reslabel, reslink) VALUES (%s, %s, %s)"
+    val = (int(skillidB), "The Python Tutorial", "https://docs.python.org/3/tutorial")
+    mycursor.execute(sql, val)
+
 
     sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
     val = (int(userid), 'John Doe', int(companyid), 'jdoe@gfaangermaigawd.com', '555-555-5555')
@@ -306,6 +323,108 @@ def getTableCompanies(userid):
 
     mydb.close()
     return(vals)
+
+
+def getTableSkillLinks():
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    sql = """SELECT b.linkid, a.name as skill, b.reslabel, b.reslink FROM SkillLinks b 
+             LEFT JOIN Skills a ON a.skillid = b.skillid
+            """
+    cur.execute(sql)
+    vals = cur.fetchall()
+
+    sql = """SELECT distinct name FROM Skills"""
+
+    cur = mydb.cursor(dictionary=False)
+    cur.execute(sql)
+    vals2 = cur.fetchall()
+    mydb.close()
+
+    optionsList = [x[0] for x in vals2]
+    for val in vals:
+        val["skillList"] = optionsList 
+
+    print("TABLE SkillLinks", vals)
+    return(vals)
+
+
+def deleteSkillLink(linkid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    sql = "DELETE FROM SkillLinks WHERE linkid = %s"
+    val = (linkid,)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+ 
+
+def addSkillLink(link):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    skill = link["skill"]
+
+    sql = "select skillid from Skills where name = %s"
+    cur.execute(sql, (skill,))
+    skillid = cur.fetchall()
+    print('skill id --- ', skillid)
+    if len(skillid) > 0:
+        skillid = skillid[0]['skillid']
+
+
+    reslabel = link["reslabel"]
+    reslink = link["reslink"]
+
+    sql = "INSERT INTO SkillLinks (skillid, reslabel, reslink) VALUES (%s, %s, %s)"
+
+    cur.execute(sql, (skillid, reslabel, reslink,))
+ 
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+def updateSkillLink(link, linkid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    skill = link["skill"]
+
+    sql = "select skillid from Skills where name = %s"
+    cur.execute(sql, (skill,))
+    skillid = cur.fetchall()
+    if len(skillid) > 0:
+        skillid = skillid[0]['skillid']
+
+
+    reslabel = link["reslabel"]
+    reslink = link["reslink"]
+
+    sql = "UPDATE SkillLinks SET skillid = %s, reslabel = %s, reslink = %s where linkid = %s"
+    val = (skillid, reslabel, reslink, linkid)
+    cur.execute(sql, val)
+
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
+    return True
+
+
+
+
+
+
 
 def addCompany(company_attributes, userid):
     mydb = mysql.connector.connect(**config)

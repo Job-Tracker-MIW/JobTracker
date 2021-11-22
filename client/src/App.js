@@ -6,6 +6,7 @@ import AppliedJobs from "./pages/AppliedJobs/AppliedJobs";
 import Jobs from "./pages/Jobs/Jobs";
 import Contacts from "./pages/Contacts/Contacts";
 import Skills from "./pages/Skills/Skills";
+import SkillLinks from "./pages/SkillLinks/SkillLinks"; //"./pages/SkillLinks/SkillLinks";
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
 import './App.css';
@@ -67,6 +68,7 @@ function App() {
         <Route path="/contacts-page" exact component={Contacts} />
         <Route path="/jobs-page" exact component={Jobs} />
         <Route path="/skills-page" exact component={Skills} />
+        <Route path="/skillLinks-page" exact component={SkillLinks} />
         <Route path="/login-page" exact component={Login} />
         <Route path="/signup" exact component={Signup} />
       </Switch>
