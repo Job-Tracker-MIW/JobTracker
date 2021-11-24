@@ -1,6 +1,9 @@
 import React, { } from 'react';
 import '../../styles/tableCSS.css';
 import './contacts.css'
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
+
 
 export default class ContactRow extends React.Component {
     constructor(props) {
@@ -11,7 +14,8 @@ export default class ContactRow extends React.Component {
 	    email: this.props.email,       // email = email
 	    phone: this.props.phone,       // email = email
 	    company: this.props.company,       // company = company
-	    jobCount: this.props.jobCount       // jobCount = jobCount
+	    jobCount: this.props.jobCount,     // jobCount = jobCount
+	    companyList: this.props.companyList
 	}
     }
 
@@ -82,6 +86,7 @@ export default class ContactRow extends React.Component {
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.email} onChange={this.handleChangeEmail.bind(this)} /></td>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.phone} onChange={this.handleChangePhone.bind(this)} /></td>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.company} onChange={this.handleChangeCo.bind(this)} /></td>
+            <td onClick={this.setIsEditing}><Dropdown options={this.props.companyList} onChange={this.handleChangeCo} value={this.props.company} placeholder="Select a Company"/></td>
             <td>{this.props.jobCount}</td>
             <button onClick={this.deleteRow} className={!this.state.isEditing ?  'hidden' : undefined}>Delete</button>
             <button onClick={this.updateRow} className={!this.state.isEditing ? 'hidden' : undefined}>Update</button>
