@@ -63,28 +63,14 @@ def get_jobtable():
     userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
     val =  db.getTableApplications(userid)
 
-    print('appget', val)
     return {"tableData": 
         val}
 
-# @app.route('/appjobs', methods=['POST'])
-# @token_required
-# def addAppJob():
-#   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
-#   application = request.get_json()
-
-#   wasAdded = db.addApplications(application, userid)
-
-#   if wasAdded:
-#     return flask.Response(status=201)
-#   else:
-#     return flask.Response(status=403)
 
 @app.route('/appjobs/<appid>', methods=['PUT'])
 @token_required
 def updateAppJob(appid):
 
-  print('updating ---------------------------------------')
 
   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   application = request.get_json()
@@ -121,9 +107,12 @@ def addToApplied():
     today = date.today()
     curr_datetime = today.strftime("%m/%d/%y")
 
+
     wasAdded = db.addToApplied(userid, applied_attributes, curr_datetime)
 
-    if wasAdded:
+    update_jobs = db.updateJobApplied(userid, applied_attributes)
+
+    if wasAdded and update_jobs:
         return flask.Response(status=201)
     else:
         return flask.Response(status=403)
@@ -169,12 +158,10 @@ def updateContact(contactid):
 @app.route('/contacts/<contactid>', methods=['DELETE'])
 @token_required
 def deleteContact(contactid):
-  print('toDeleted')
   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
 
   wasDeleted = db.deleteContact(int(contactid))
 
-  print('wasDeleted', wasDeleted)
 
   if wasDeleted:
     return flask.Response(status=201)
@@ -194,12 +181,12 @@ def get_comptable():
         return {"tableData": val}
     
     if request.method =='POST':
+
         userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
         company_attributes = request.get_json()
         wasAdded = db.addCompany(company_attributes, userid)
 
         if wasAdded:
-            print("Added Successfully")
             # flash("Added Successfully!")
             return flask.Response(status=201)
         else:
@@ -258,15 +245,63 @@ def updateSkill(skillid):
 @app.route('/skills/<skillid>', methods=['DELETE'])
 @token_required
 def deleteSkill(skillid):
-  print("hello")
   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   wasDeleted = db.deleteSkill(int(skillid))
 
   if wasDeleted:
-    print("Deleted skill with id " + skillid)
     return flask.Response(status=201)
   else:
     return flask.Response(status=403)
+
+
+@app.route("/skillLinks", methods=["GET"])
+@token_required
+def get_skilllinktable():
+    userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+    val =  db.getTableSkillLinks()
+    return {"tableData": val}
+
+@app.route('/skillLinks/<linkid>', methods=['DELETE'])
+@token_required
+def deleteSkillLink(linkid):
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+
+  wasDeleted = db.deleteSkillLink(int(linkid))
+
+  if wasDeleted:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/skillLinks', methods=['POST'])
+@token_required
+def addSkillLinks():
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+  link = request.get_json()
+  print('POST ----- ---- ', link)
+  wasAdded = db.addSkillLink(link)
+
+  if wasAdded:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+@app.route('/skillLinks/<linkid>', methods=['PUT'])
+@token_required
+def updateSkillLinks(linkid):
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+  link = request.get_json()
+
+  wasUpdated = db.updateSkillLink(link, int(linkid))
+
+  if wasUpdated:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
+
+
+
+
 
 # authentication endpoints
 

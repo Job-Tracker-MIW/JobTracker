@@ -97,6 +97,7 @@ export default class AppliedJobsRow extends React.Component {
         this.setState({isEditing: false});
     }
   
+
     render() {
         return <tr>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.title} onChange={this.handleChangeTitle.bind(this)} /></td>

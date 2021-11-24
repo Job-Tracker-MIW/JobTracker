@@ -11,6 +11,7 @@ export default class JobsAdd extends React.Component {
             isAdding: false,
             company: this.props.company,
             title: this.props.title,
+            userDefName: this.props.userDefName,
             name: this.props.name,
             jobid: this.props.jobid,
             companyid: this.props.companyid,
@@ -35,6 +36,9 @@ export default class JobsAdd extends React.Component {
         this.setState({ title: e.target.value});
     }
 
+    handleChangeUserDefName = (e) => {
+        this.setState({ userDefName: e.target.value});
+    }
     handleChangeName = (e) => {
         this.setState({ name: e.target.value});
     }
@@ -52,6 +56,7 @@ export default class JobsAdd extends React.Component {
                 'token': localStorage.getItem('token')
             },
             body: JSON.stringify({"title": this.state.title,
+		    "userDefName": this.state.userDefName,
             "company": this.state.company, 
             "companyid": this.state.companyid,
             "skill": this.state.skill})
@@ -71,6 +76,7 @@ export default class JobsAdd extends React.Component {
             <button onClick={this.setIsAdding} className={this.state.isAdding ? 'hidden' : undefined}>Add</button>
             <td onClick={this.setIsEditing} className={!this.state.isAdding ? 'hidden' : undefined}><input type="text" placeholder="Company Name" onChange={this.handleChangeCompany.bind(this)} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding ? 'hidden' : undefined}><input type="text" placeholder="Job Title" onChange={this.handleChangeTitle.bind(this)} /></td>
+            <td onClick={this.setIsEditing} className={!this.state.isAdding ? 'hidden' : undefined}><input type="text" placeholder="User defined name" onChange={this.handleChangeUserDefName.bind(this)} /></td>
             <td className={!this.state.isAdding ? 'hidden' : undefined}></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding ? 'hidden' : undefined}><Dropdown options={this.options} onChange={this.handleChangeSkill} value={this.props.skill} placeholder="Select a language"/></td>
             <button onClick={this.addCompany} className={!this.state.isAdding ? 'hidden' : undefined}>Submit</button>
