@@ -290,6 +290,18 @@ def getTableContacts(userid):
 
     vals = cur.fetchall()
 
+    sql = """SELECT distinct company FROM Companies"""
+
+    cur = mydb.cursor(dictionary=False)
+    cur.execute(sql)
+    vals2 = cur.fetchall()
+    mydb.close()
+
+    optionsList = [x[0] for x in vals2]
+    for val in vals:
+        val["companyList"] = optionsList 
+
+
     mydb.close()
     return(vals)
 
