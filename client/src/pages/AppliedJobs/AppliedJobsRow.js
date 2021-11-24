@@ -3,6 +3,8 @@ import '../../styles/tableCSS.css';
 import './AppliedJobs.css';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default class AppliedJobsRow extends React.Component {
     constructor(props) {
@@ -13,9 +15,11 @@ export default class AppliedJobsRow extends React.Component {
             name: this.props.name,
             company: this.props.company,
             status: this.props.status,
-            appdt: this.props.appdt,
+            appdt: Date.parse(this.props.appdt) || new Date(),
             companies: this.props.companies
         }
+
+        console.log(typeof this.state.appdt + " " + this.state.appdt)
     }
 
     companyOptions = [];
@@ -38,7 +42,7 @@ export default class AppliedJobsRow extends React.Component {
     }
 
     handleChangeAppdt = (e) => {
-        this.setState({ appdt: e.target.value});
+        this.setState({ appdt: e});
     }
 
     handleChangeStatus = (e) => {
@@ -96,10 +100,10 @@ export default class AppliedJobsRow extends React.Component {
 
     render() {
         return <tr>
-            <td onClick={this.setIsEditing}><input type="text" disabled defaultValue={this.props.title} onChange={this.handleChangeTitle.bind(this)} /></td> 
-            <td onClick={this.setIsEditing}><input type="text" disabled  defaultValue={this.props.company} onChange={this.handleChangeCompany} /></td>
-            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.name} disabled onChange={this.handleChangeName.bind(this)} /></td>
-            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.appdt} onChange={this.handleChangeAppdt.bind(this)} /></td>
+            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.title} onChange={this.handleChangeTitle.bind(this)} /></td>
+            <td onClick={this.setIsEditing}><Dropdown options={this.props.companies} onChange={this.handleChangeCompany} value={this.props.company} placeholder="Select a company" /></td>
+            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.name} onChange={this.handleChangeName.bind(this)} /></td>
+            <td onClick={this.setIsEditing}><DatePicker selected={this.state.appdt} onChange={this.handleChangeAppdt} /></td>
             <td onClick={this.setIsEditing}><Dropdown options={this.options} onChange={this.handleChangeStatus} value={this.props.status} placeholder="Select a status" /></td>
             <button onClick={this.deleteRow} className={!this.state.isEditing?  'hidden' : undefined}>Delete</button>
             <button onClick={this.updateRow} className={!this.state.isEditing ? 'hidden' : undefined}>Update</button>

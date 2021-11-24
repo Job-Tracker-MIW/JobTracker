@@ -65,7 +65,7 @@ export default class SkillRow extends React.Component {
         return <tr>
             <td onClick={this.setIsEditing}><Dropdown options={this.options} onChange={this.handleChangeSkill} value={this.props.skill} placeholder="Select a language"/></td>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.pro} onChange={this.handleChangePro.bind(this)} /></td>
-            <td>{this.props.jobMatch}</td>
+            <td>{this.props.jobMatch === null ? 0 : this.props.jobMatch}</td>
             <button onClick={this.deleteRow}>Delete</button>
             <button onClick={this.updateRow} className={!this.state.isEditing ? 'hidden' : undefined}>Update</button>
             <button onClick={this.cancelEditing} className={!this.state.isEditing ? 'hidden' : undefined}>Cancel</button>

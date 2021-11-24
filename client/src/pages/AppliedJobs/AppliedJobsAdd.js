@@ -3,6 +3,8 @@ import '../../styles/tableCSS.css';
 import './AppliedJobs.css';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default class AppliedJobsAdd extends React.Component {
     constructor(props) {
@@ -81,7 +83,7 @@ export default class AppliedJobsAdd extends React.Component {
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeTitle.bind(this)} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><Dropdown options={this.props.companies} onChange={this.handleChangeCompany} value={this.props.company} placeholder="Select a company" /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeName.bind(this)} /></td>
-            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeAppdt.bind(this)} /></td>
+            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><DatePicker selected={this.state.appdt} onChange={this.handleChangeAppdt} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><Dropdown options={this.options} onChange={this.handleChangeStatus} value={this.props.status} placeholder="Select a status" /></td>
             <td className={!this.state.isAdding?  'hidden' : undefined}></td>
             <button onClick={this.submitRow} className={!this.state.isAdding ? 'hidden' : undefined}>Submit</button>
