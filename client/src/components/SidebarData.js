@@ -23,4 +23,10 @@ export const SidebarData = [
     path: "/contacts-page",
     icon: <FaIcons.FaPhone />,
   },
+  {
+    title: "Get Skillz",
+    path: "/skillLinks-page",
+    icon: <FaIcons.FaPhone />,
+  },
+
 ];
