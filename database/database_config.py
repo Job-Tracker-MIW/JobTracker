@@ -74,7 +74,7 @@ def createAndSeedTables():
     mycursor.execute(sql, val)
 
     sql = "insert into Companies (company) values (%s)"
-    val = ("faangermmaigawd",)
+    val = ("Twitter",)
     mycursor.execute(sql, val)
 
     sql = "insert into Companies (company) values (%s)"
@@ -84,15 +84,29 @@ def createAndSeedTables():
     sql = "insert into Companies (company) values (%s)"
     val = ("Microsoft",)
     mycursor.execute(sql, val)
-
-
+    
+    sql = "insert into Companies (company) values (%s)"
+    val = ("Amazon",)
+    mycursor.execute(sql, val)
+    
+    sql = "insert into Companies (company) values (%s)"
+    val = ("Slack",)
+    mycursor.execute(sql, val)
+    
+    mydb.commit()
 
     sql = "select companyid from Companies"
     mycursor.execute(sql)
     val = mycursor.fetchone()
     val2 = mycursor.fetchone()
+    val3 = mycursor.fetchone()
+    val4 = mycursor.fetchone()
+    val5 = mycursor.fetchone()
     companyid = val[0]
     companyid2 = val2[0]
+    companyid3 = val3[0]
+    companyid4 = val4[0]
+    companyid5 = val5[0]
 
     sql = "select userid from Users"
     mycursor.execute(sql)
@@ -108,10 +122,16 @@ def createAndSeedTables():
     mycursor.execute(sql, val)
 
     sql = "INSERT INTO Skills (userid, name, proficiency) VALUES (%s, %s, %s)"
-    val = (int(userid), "C++", "6")
+    val = (int(userid), "C", "4")
     mycursor.execute(sql, val)
 
-
+    sql = "INSERT INTO Skills (userid, name, proficiency) VALUES (%s, %s, %s)"
+    val = (int(userid), "Assembly", "7")
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Skills (userid, name, proficiency) VALUES (%s, %s, %s)"
+    val = (int(userid), "C++", "3")
+    mycursor.execute(sql, val)
 
     sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
     val = (int(userid), "Hope I get it", "Software Engineer I", "Javascript", int(companyid))
@@ -120,19 +140,33 @@ def createAndSeedTables():
     sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
     val = (int(userid), "looks good!", "Software Engineer II", "C", int(companyid2))
     mycursor.execute(sql, val)
-
-    # sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-    # val = (int(userid), "A start", "Jr. Software Engineer", int(companyid2))
-    # mycursor.execute(sql, val)
-
-
+    
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(userid), "Exciting!", "Software Engineer", "C", int(companyid3))
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(userid), "w00t!", "Software Engineer", "C++", int(companyid4))
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(userid), "This is the one!", "Software Engineer I", "Python", int(companyid5))
+    mycursor.execute(sql, val)
+    
+    mydb.commit()
 
     sql = "select jobid from Jobs"
     mycursor.execute(sql)
     val = mycursor.fetchone()
     val2 = mycursor.fetchone()
+    val3 = mycursor.fetchone()
+    val4 = mycursor.fetchone()
+    val5 = mycursor.fetchone()
     jobid = val[0]
     jobid2 = val2[0]
+    jobid3 = val3[0]
+    jobid4 = val4[0]
+    jobid5 = val5[0]
 
     sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
     val = (int(jobid), int(userid), "First Application", "Applied", datetime.date(2021,10,1))
@@ -141,24 +175,77 @@ def createAndSeedTables():
     sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
     val = (int(jobid2), int(userid), "Second Application", "Applied", datetime.date(2021,10,10))
     mycursor.execute(sql, val)
-
+    
+    sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(jobid3), int(userid), "Third Application", "Applied", datetime.date(2021,10,3))
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(jobid4), int(userid), "Fourth Application", "Applied", datetime.date(2021,10,7))
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Applications (jobid, userid, name, status, application_date) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(jobid5), int(userid), "Fifth Application", "Applied", datetime.date(2021,10,11))
+    mycursor.execute(sql, val)
+    
+    mydb.commit()
 
     sql = "select skillid from Skills"
     mycursor.execute(sql)
     val = mycursor.fetchone()
+    val2 = mycursor.fetchone()
+    val3 = mycursor.fetchone()
+    val4 = mycursor.fetchone()
+    val5 = mycursor.fetchone()
     skillid = val[0]
+    skillid2 = val2[0]
+    skillid3 = val3[0]
+    skillid4 = val4[0]
+    skillid5 = val5[0]
 
     sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
     val = (int(skillid), int(jobid))
     mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
+    val = (int(skillid2), int(jobid5))
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
+    val = (int(skillid3), int(jobid2))
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
+    val = (int(skillid3), int(jobid3))
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
+    val = (int(skillid5), int(jobid4))
+    mycursor.execute(sql, val)
+    
+    mydb.commit()
 
     sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(userid), 'John Doe', int(companyid), 'jdoe@gfaangermaigawd.com', '555-555-5555')
+    val = (int(userid), 'John Doe', int(companyid), 'jdoe@gtwitter.com', '555-555-5555')
     mycursor.execute(sql, val)
 
     sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(userid), 'Jane Smith', int(companyid2), 'jdoe@osu.edu.com', '555-555-5555')
+    val = (int(userid), 'Jane Smith', int(companyid2), 'jdoe@osu.edu', '555-555-5555')
     mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(userid), 'Mike Smith', int(companyid3), 'jdoe@micrsoft.com', '555-555-5555')
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(userid), 'Batman', int(companyid4), 'jdoe@amazon.com', '555-555-5555')
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Contacts (userid, name, companyid, email, phone) VALUES (%s, %s, %s, %s, %s)"
+    val = (int(userid), 'Smithers', int(companyid5), 'jdoe@slack.com', '555-555-5555')
+    mycursor.execute(sql, val)
+
+    mydb.commit()
 
     sql = "select contactid from Contacts"
     mycursor.execute(sql)
@@ -584,7 +671,7 @@ def updateApplications(application, userid, appid):
     print(application)
 
     title = application["title"]
-    company = application["company"]["value"]
+    company = application["company"]
     name = application["name"]
     status = application["status"]
     appdt = parser.parse(application["appdt"])
