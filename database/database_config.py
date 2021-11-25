@@ -546,64 +546,62 @@ def updateSkillLink(link, linkid):
 
     return True
 
-
-
-
-
-
-
 def addCompany(company_attributes, userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
     company = company_attributes["company"]
     title = company_attributes["title"]
-    name = 'We Should Get Rid Of This'
     userDefName = company_attributes["userDefName"]
-
     skill = company_attributes["skill"]
 
-    check_company_name = "SELECT * FROM Companies"
-    cur.execute(check_company_name)
-    check_name = cur.fetchall()
+    # check_company_name = "SELECT * FROM Companies"
+    # cur.execute(check_company_name)
+    # check_name = cur.fetchall()
 
-    # Check for duplicate company name
-    for i in check_name:
-        same_company_id = ''
-        if (i['company']) == company:
-            same_company_id = i['companyid']
-            job_status = 'Not Applied'
-            # print("SAME ID", same_company_id, company)
-            sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
-            val2 = (int(userid), userDefName, title, skill, same_company_id, job_status)
-            cur.execute(sql2, val2)
-            mydb.commit()
 
-            # check for matching skill and add to JobsSkills if so
-            sql = "SELECT skillid FROM Skills where name = %s"
-            val = (skill,)
-            cur.execute(sql,val)
-            skillMatches = cur.fetchall()
-            if len(skillMatches) > 0:
-                skillMatch = skillMatches[0]["skillid"]
+    # # Check for duplicate company name
+    # for i in check_name:
+    #     same_company_id = ''
+    #     if (i['company']) == company:
+    #         same_company_id = i['companyid']
+    #         job_status = 'Not Applied'
+    #         # print("SAME ID", same_company_id, company)
+    #         sql2 = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    #         val2 = (int(userid), userDefName, title, skill, same_company_id, job_status)
+    #         cur.execute(sql2, val2)
+    #         mydb.commit()
 
-            sql = "SELECT jobid FROM Jobs where Jobs.skill = %s"
-            val = (skill,)
-            cur.execute(sql,val)
-            jobMatches = cur.fetchall()
-            if len(jobMatches) > 0:
-                jobMatch = jobMatches[0]["jobid"]
+    #         # check for matching skill and add to JobsSkills if so
+    #         sql = "SELECT skillid FROM Skills where name = %s"
+    #         val = (skill,)
+    #         cur.execute(sql,val)
+    #         skillMatches = cur.fetchall()
+    #         print("HERE FOR SKILL MATCH")
+    #         if len(skillMatches) > 0:
+    #             skillMatch = skillMatches[0]["skillid"]
+    #             print("Skill Match", skillMatch)
+
+    #         sql = "SELECT jobid FROM Jobs where Jobs.skill = %s"
+    #         val = (skill,)
+    #         cur.execute(sql,val)
+    #         jobMatches = cur.fetchall()
+    #         print("HERE FOR JOB MATCH")
+    #         if len(jobMatches) > 0:
+    #             jobMatch = jobMatches[0]["jobid"]
+    #             print("Job Match", jobMatch)
             
-            if len(jobMatches) > 0 and len(skillMatches) > 0:
-                sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
-                vals = (int(skillMatch), int(jobMatch))
-                cur.execute(sql, vals)
-                mydb.commit()
+    #         if len(jobMatches) > 0 and len(skillMatches) > 0:
+    #             sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
+    #             vals = (int(skillMatch), int(jobMatch))
+    #             print("VALLLLLS FOR Skill MATCH", vals)
+    #             cur.execute(sql, vals)
+    #             mydb.commit()
 
-            cur.close()
-            mydb.close()
+    #         cur.close()
+    #         mydb.close()
 
-            return True
+    #         return True
             
     # When Company Name is unique
     sql = "INSERT INTO Companies (company) VALUES (%s)"
@@ -658,11 +656,8 @@ def deleteCompany(company_attributes, userid):
     company_id = int(company_attributes["companyid"])
     job_id = int(company_attributes["jobid"])
     userDefName = company_attributes["userDefName"]
-    print("COMPANY ID", company_id)
-    print("JOB ID", job_id)
-
-    # SOMETHING WEIRD IS HAPPENING WHERE THE DELETE PAGE ISN'T BEING REFRESHED UPON
-    # DELETE SOMETIMES. STILL TRYING TO FIGURE THAT OUT. 
+    # print("COMPANY ID", company_id)
+    # print("JOB ID", job_id)
     
     sql = "DELETE FROM Jobs WHERE jobid = %s AND companyid = %s AND userid = %s and name = %s"
     val = (job_id, company_id, userid, userDefName)
@@ -682,6 +677,36 @@ def deleteCompany(company_attributes, userid):
 
     return True
 
+def updateCompany(company_update_info, companyid):
+    mydb = mysql.connector.connect(**config)
+    cur = mydb.cursor(dictionary=True)
+
+    company_name = company_update_info["company"]
+    title = company_update_info["title"]
+    userDefName = company_update_info["userDefName"]
+    skill = company_update_info["skill"]
+    jobid = company_update_info["jobid"]
+
+    # Update Company w/PUT
+    sql = """UPDATE Companies SET company = %s 
+            WHERE Companies.companyid = %s"""
+
+    val = (company_name, companyid)
+    cur.execute(sql, val)
+
+    # Update Jobs w/PUT
+    sql = """UPDATE Jobs SET title = %s, name = %s, skill = %s 
+        WHERE Jobs.jobid = %s"""
+
+    val = (title, userDefName, skill, jobid)
+    cur.execute(sql, val)
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+    
+    return True
+
 def updateJobApplied(userid, applied_attributes):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
@@ -695,7 +720,6 @@ def updateJobApplied(userid, applied_attributes):
     val = (set_as_applied, job_id)
 
     cur.execute(sql, val)
-
 
     mydb.commit()
     cur.close()
@@ -760,7 +784,11 @@ def addContact(contact, userid):
     cur = mydb.cursor(dictionary=True)
 
     name = contact["name"]
-    company = contact["company"]
+    company_dict = contact["company"]
+    company = company_dict['value']
+
+    # print("ADD NAME COMPANY", name)
+    # print("ADD CONTACT COMPANY", company_dict['value'])
 
     sql = "select companyid from Companies where company = %s"
 
