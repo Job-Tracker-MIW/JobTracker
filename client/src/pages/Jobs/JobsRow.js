@@ -15,7 +15,8 @@ export default class JobsRow extends React.Component {
             name: this.props.name,
             jobid: this.props.jobid,
             companyid: this.props.companyid,
-            skill: this.props.skill
+            skill: this.props.skill,
+            unique_company_id: this.props.unique_company_id
         }
     }
 
@@ -79,16 +80,21 @@ export default class JobsRow extends React.Component {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem('token')
             },
             body: JSON.stringify({"company": this.state.company, 
             "title": this.state.title,
             "userDefName": this.state.userDefName,
             "name": this.state.name,
-            "skill": this.state.skill})
+            "skill": this.state.skill,
+            "companyid": this.state.companyid,
+            "jobid": this.state.jobid,
+            "unique_company_id": this.state.unique_company_id})
         })
         .then(res => {
             console.log(res);
+            // this.setState({isEditing: false});
             this.props.onRefresh()})
     }
 

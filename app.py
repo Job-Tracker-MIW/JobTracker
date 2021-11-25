@@ -206,6 +206,19 @@ def get_comptable():
             return flask.Response(status=403)
     else:
         print("Something Went Wrong")
+
+@app.route('/companies/<companyid>', methods=['PUT'])
+@token_required
+def updateCompany(companyid):
+  userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
+  company_update_info = request.get_json()
+
+  wasUpdated = db.updateCompany(company_update_info, int(companyid))
+
+  if wasUpdated:
+    return flask.Response(status=201)
+  else:
+    return flask.Response(status=403)
    
 
 # skills endpoints
