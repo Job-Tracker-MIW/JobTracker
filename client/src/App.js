@@ -12,6 +12,7 @@ import Signup from "./pages/Signup/Signup";
 import './App.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import Landing from './pages/Landing/Landing';
+import { useHistory } from "react-router-dom";
 
 function App() {
   const [currentMsg, setCurrentMsg] = useState(0);
@@ -28,8 +29,10 @@ function App() {
   const data = React.useMemo(() => tableData, [tableData]);
 
   const removeToken = () => {
-    localStorage.removeItem('token')
+    window.history.pushState({}, null, "/");
+    localStorage.removeItem('token');
     setToken(0);
+    window.location.reload(false);
   };
 
   const columns = React.useMemo(
@@ -58,8 +61,8 @@ function App() {
     return (
       <Router>
       <Switch>
-        <Route path="/home" exact component={Landing} />
-        <Route path="/" exact component={() => <Login setToken={setToken}/>}/>
+        <Route path="/" exact component={Landing} />
+        <Route path="/home" exact component={() => <Login setToken={setToken}/>}/>
         <Route path="/signup" exact component={Signup} />
       </Switch>
       </Router>
@@ -70,7 +73,7 @@ function App() {
     <Router>
       <Sidebar removeToken={removeToken}/>
       <Switch>
-        <Route path="/" exact component={Jobs} /> {/* the home page */}
+        <Route path="/home" exact component={Jobs} /> {/* the home page */}
         <Route path="/applied-jobs-page" exact component={AppliedJobs} />
         <Route path="/contacts-page" exact component={Contacts} />
         <Route path="/jobs-page" exact component={Jobs} />
