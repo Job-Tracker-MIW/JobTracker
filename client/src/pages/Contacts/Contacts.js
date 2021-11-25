@@ -26,6 +26,7 @@ export default class Contacts extends React.Component {
           this.setState({
             contacts: result.tableData
           });
+          console.log(this.state.contacts);
         },
         (error) => {
           this.setState({
@@ -54,7 +55,7 @@ export default class Contacts extends React.Component {
         {this.state.contacts.map(element =>
                     <ContactRow onRefresh={this.getContacts} key={element.contactid} {...element}/>
             )}
-            <ContactAdd onRefresh={this.getContacts}></ContactAdd>
+            <ContactAdd onRefresh={this.getContacts} companyList={this.state.contacts.length > 0 ? this.state.contacts[0].companyList : []}></ContactAdd>
         </tbody>
       </table>
     </div>
