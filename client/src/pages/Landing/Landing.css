@@ -1,0 +1,37 @@
+.white {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+    height:700px;
+}
+
+.white-small {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+    height:400px;
+}
+
+.blue {
+    background-color: lightblue;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+    height:700px;
+}
+
+.blue-small {
+    background-color: lightblue;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+    height:300px;
+}
+
+h1 {
+    font-weight: bold;
+}
