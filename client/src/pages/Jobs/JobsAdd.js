@@ -63,8 +63,9 @@ export default class JobsAdd extends React.Component {
         })
         .then(res => {
             console.log(res);
+            this.props.onRefresh()});
             this.setState({isAdding: false});
-            this.props.onRefresh()})
+            
     }
 
     cancelAdding = () => {
