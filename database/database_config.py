@@ -546,26 +546,18 @@ def updateSkillLink(link, linkid):
 
     return True
 
-
-
-
-
-
-
 def addCompany(company_attributes, userid):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
     company = company_attributes["company"]
     title = company_attributes["title"]
-    name = 'We Should Get Rid Of This'
     userDefName = company_attributes["userDefName"]
-
     skill = company_attributes["skill"]
 
-    check_company_name = "SELECT * FROM Companies"
-    cur.execute(check_company_name)
-    check_name = cur.fetchall()
+    # check_company_name = "SELECT * FROM Companies"
+    # cur.execute(check_company_name)
+    # check_name = cur.fetchall()
 
 
     # # Check for duplicate company name
@@ -792,7 +784,11 @@ def addContact(contact, userid):
     cur = mydb.cursor(dictionary=True)
 
     name = contact["name"]
-    company = contact["company"]
+    company_dict = contact["company"]
+    company = company_dict['value']
+
+    # print("ADD NAME COMPANY", name)
+    # print("ADD CONTACT COMPANY", company_dict['value'])
 
     sql = "select companyid from Companies where company = %s"
 
