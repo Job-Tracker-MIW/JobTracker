@@ -3,11 +3,9 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
-import { SidebarData } from "./SidebarData";
-import SubMenu from "./SubMenu";
 import { IconContext } from "react-icons/lib";
-import "../styles/header.css";
-import jt_logo from "../assets/jt_logo.png";
+import "../../styles/header.css";
+import jt_logo from "../../assets/jt_logo.png";
 
 // Navbar Properties
 const Nav = styled.div`
@@ -87,10 +85,15 @@ export const NavBtnLink = styled(Link)`
   }
 `;
   
-const Sidebar = (props) => {
+const LandingNav = (props) => {
   const [sidebar, setSidebar] = useState(false);
   
   const showSidebar = () => setSidebar(!sidebar);
+
+  const removeToken = () => {
+    localStorage.removeItem('token')
+    props.setToken(0);
+  };
 
   return (
      
@@ -111,34 +114,13 @@ const Sidebar = (props) => {
           }}>
         </h1>
 
-
         <NavBtn>
-          <NavBtnLink onClick={props.removeToken}>Sign Out</NavBtnLink>
+          <NavBtnLink to="/">Login</NavBtnLink>
+        </NavBtn>
+        <NavBtn>
+          <NavBtnLink to="/signup">Sign Up</NavBtnLink>
         </NavBtn>
       </Nav>
-
-      <SidebarNav sidebar={sidebar}>
-        <SidebarWrap>
-          <NavIcon to="#">
-            <AiIcons.AiOutlineClose onClick={showSidebar} />
-          </NavIcon>
-          {SidebarData.map((item, index) => {
-            return <SubMenu item={item} key={index} />;
-          })}
-        </SidebarWrap>
-      </SidebarNav>
-
-        <SidebarNav sidebar={sidebar} onClick={showSidebar}>
-          <SidebarWrap>
-            {/* close out sidebar X */}
-            <NavIconX to="#">
-              <FaIcons.FaTimes onClick={showSidebar} />
-            </NavIconX>
-            {SidebarData.map((item, index) => {
-              return <SubMenu item={item} key={index} />;
-            })}
-          </SidebarWrap>
-        </SidebarNav>
       </IconContext.Provider>
       
       </>
@@ -148,4 +130,4 @@ const Sidebar = (props) => {
 };
 
   
-export default Sidebar;
+export default LandingNav;
