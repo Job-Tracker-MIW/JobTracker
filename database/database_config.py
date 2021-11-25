@@ -143,26 +143,47 @@ def createAndSeedTables():
     sql = "INSERT INTO Skills (userid, name, proficiency) VALUES (%s, %s, %s)"
     val = (int(userid), "C++", "3")
     mycursor.execute(sql, val)
+    
+    # applied
 
     sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
-    val = (int(userid), "Hope I get it", "Software Engineer I", "Javascript", int(companyid), 'Not Applied')
+    val = (int(userid), "Hope I get it", "Software Engineer I", "Javascript", int(companyid), 'Applied')
     mycursor.execute(sql, val)
 
     sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
-    val = (int(userid), "looks good!", "Software Engineer II", "C", int(companyid2), 'Not Applied')
+    val = (int(userid), "looks good!", "Software Engineer II", "C", int(companyid2), 'Applied')
     mycursor.execute(sql, val)
     
-    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(userid), "Exciting!", "Software Engineer", "C", int(companyid3))
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (int(userid), "Exciting!", "Software Engineer", "C", int(companyid3),'Applied')
     mycursor.execute(sql, val)
     
-    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(userid), "w00t!", "Software Engineer", "C++", int(companyid4))
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (int(userid), "w00t!", "Software Engineer", "C++", int(companyid4), 'Applied')
     mycursor.execute(sql, val)
     
-    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
-    val = (int(userid), "This is the one!", "Software Engineer I", "Python", int(companyid5))
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (int(userid), "This is the one!", "Software Engineer I", "Python", int(companyid5), 'Applied')
     mycursor.execute(sql, val)
+    
+    # not applied
+    
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (int(userid), "Hokay!", "Software Engineer II", "R", int(companyid2), 'Not Applied')
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (int(userid), "Alight!", "Software Engineer", "Java", int(companyid3),'Not Applied')
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (int(userid), "this is great!", "Software Engineer", "C#", int(companyid4), 'Not Applied')
+    mycursor.execute(sql, val)
+    
+    sql = "INSERT INTO Jobs (userid, name, title, skill, companyid, job_status) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (int(userid), "Let's do this!", "Software Engineer I", "Scala", int(companyid5), 'Not Applied')
+    mycursor.execute(sql, val)
+    
     
     mydb.commit()
 
@@ -241,7 +262,7 @@ def createAndSeedTables():
     mycursor.execute(sql, val)
 
     sql = "INSERT INTO SkillLinks (skillid, reslabel, reslink) VALUES (%s, %s, %s)"
-    val = (int(skillidB), "The Python Tutorial", "https://docs.python.org/3/tutorial")
+    val = (int(skillid2), "The Python Tutorial", "https://docs.python.org/3/tutorial")
     mycursor.execute(sql, val)
 
 

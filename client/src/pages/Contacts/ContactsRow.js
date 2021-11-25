@@ -32,10 +32,8 @@ export default class ContactRow extends React.Component {
     }
  
     handleChangeCo = (e) => {
-         this.setState({ company: e.target.value});
+         this.setState({ company: e});
     }
-
-
 
     setIsEditing = () => {
         this.setState({isEditing: true});
@@ -85,7 +83,6 @@ export default class ContactRow extends React.Component {
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.contact} onChange={this.handleChangeContact.bind(this)} /></td>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.email} onChange={this.handleChangeEmail.bind(this)} /></td>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.phone} onChange={this.handleChangePhone.bind(this)} /></td>
-            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.company} onChange={this.handleChangeCo.bind(this)} /></td>
             <td onClick={this.setIsEditing}><Dropdown options={this.props.companyList} onChange={this.handleChangeCo} value={this.props.company} placeholder="Select a Company"/></td>
             <td>{this.props.jobCount}</td>
             <button onClick={this.deleteRow} className={!this.state.isEditing ?  'hidden' : undefined}>Delete</button>

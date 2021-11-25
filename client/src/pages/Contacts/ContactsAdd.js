@@ -1,6 +1,8 @@
 import React, { } from 'react';
 import '../../styles/tableCSS.css';
-import './contacts.css'
+import './contacts.css';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 
 export default class ContactAdd extends React.Component {
     constructor(props) {
@@ -11,8 +13,11 @@ export default class ContactAdd extends React.Component {
             company: this.props.company,       // company = companyid
             email: this.props.email,       // email = email
             phone: this.props.phone,       // email = email
-            jobCount: this.props.jobCount       // email = email
+            jobCount: this.props.jobCount,       // email = email
+            companyList: this.props.companyList
         }
+
+        console.log(this.state.companyList);
     }
 
     handleChangeContact = (e) => {
@@ -29,8 +34,8 @@ export default class ContactAdd extends React.Component {
     }
 
     handleChangeCo = (e) => {
-        this.setState({ company: e.target.value});
-    }
+        this.setState({ company: e});
+   }
  
 
     setIsAdding = () => {
@@ -69,7 +74,7 @@ export default class ContactAdd extends React.Component {
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeContact.bind(this)} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeEmail.bind(this)} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangePhone.bind(this)} /></td>
-            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeCo.bind(this)} /></td>
+            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><Dropdown options={this.props.companyList} onChange={this.handleChangeCo} value={this.props.company} placeholder="Select a Company"/></td>
             <td className={!this.state.isAdding?  'hidden' : undefined}></td>
             <button onClick={this.submitRow} className={!this.state.isAdding ? 'hidden' : undefined}>Submit</button>
             <button onClick={this.cancelAdding} className={!this.state.isAdding ? 'hidden' : undefined}>Cancel</button>
