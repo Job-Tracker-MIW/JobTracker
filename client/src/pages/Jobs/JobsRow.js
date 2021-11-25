@@ -95,7 +95,8 @@ export default class JobsRow extends React.Component {
         .then(res => {
             console.log(res);
             // this.setState({isEditing: false});
-            this.props.onRefresh()})
+            this.props.onRefresh()});
+            this.setState({isEditing: false});
     }
 
     // Need to finish this when Mat's portion is done
