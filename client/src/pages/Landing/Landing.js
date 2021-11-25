@@ -24,7 +24,7 @@ export default class Landing extends React.Component {
                 <div className="white-small">
                     <div className="content">
                         <h1>Welcome to JobTracker!</h1>
-                        <p>JobTracker in your one-stop-shop for tracking job applications in Computer Science.</p>
+                        <p>JobTracker in your one-stop-shop for tracking software engineer jobs.</p>
                     </div>
                 </div>
                 <div className="blue">

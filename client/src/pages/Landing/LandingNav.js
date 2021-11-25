@@ -102,9 +102,6 @@ const LandingNav = (props) => {
       {/* <h1 class = "h1-center"> JOB TRACKER </h1> */}
       <IconContext.Provider value={{ color: "#fff" }}>
       <Nav>
-        <NavIcon to="#">
-          <FaIcons.FaBars onClick={showSidebar} />
-        </NavIcon>
         <h1
           style={{
             textAlign: "center",
@@ -115,7 +112,7 @@ const LandingNav = (props) => {
         </h1>
 
         <NavBtn>
-          <NavBtnLink to="/">Login</NavBtnLink>
+          <NavBtnLink to="/home">Login</NavBtnLink>
         </NavBtn>
         <NavBtn>
           <NavBtnLink to="/signup">Sign Up</NavBtnLink>
