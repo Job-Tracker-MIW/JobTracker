@@ -71,7 +71,6 @@ def get_jobtable():
 @token_required
 def updateAppJob(appid):
 
-
   userid = jwt.decode(request.headers.get('token'), app.config['SECRET_KEY'])['userid']
   application = request.get_json()
 

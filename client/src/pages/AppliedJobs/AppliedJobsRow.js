@@ -16,7 +16,8 @@ export default class AppliedJobsRow extends React.Component {
             company: this.props.company,
             status: this.props.status,
             appdt: Date.parse(this.props.appdt) || new Date(),
-            companies: this.props.companies
+            companies: this.props.companies,
+            userDefName: this.props.userDefName
         }
 
         console.log(typeof this.state.appdt + " " + this.state.appdt)
@@ -83,14 +84,17 @@ export default class AppliedJobsRow extends React.Component {
             },
               body: JSON.stringify({"title": this.state.title,
 		                  "company": this.state.company,
-		                  "name": this.state.name | "",
+		                //   "name": this.state.name | "",
+                          "name": this.state.name,
 		                  "appdt": this.state.appdt,
 		                  "status": this.state.status,
+                          "userDefName": this.state.userDefName
 		                  })
         })
         .then(res => {
             console.log(res);
-            this.props.onRefresh()})
+            this.props.onRefresh()});
+            this.setState({isEditing: false});
     }
 
     cancelEditing = () => {
@@ -100,8 +104,10 @@ export default class AppliedJobsRow extends React.Component {
 
     render() {
         return <tr>
-            <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.title} onChange={this.handleChangeTitle.bind(this)} /></td>
-            <td onClick={this.setIsEditing}><Dropdown options={this.props.companies} onChange={this.handleChangeCompany} value={this.props.company} placeholder="Select a company" /></td>
+            {/* <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.title} onChange={this.handleChangeTitle.bind(this)} /></td> */}
+            <td>{this.props.title}</td>
+            {/* <td onClick={this.setIsEditing}><Dropdown options={this.props.companies} onChange={this.handleChangeCompany} value={this.props.company} placeholder="Select a company" /></td> */}
+            <td>{this.props.company}</td>
             <td onClick={this.setIsEditing}><input type="text" defaultValue={this.props.name} onChange={this.handleChangeName.bind(this)} /></td>
             <td onClick={this.setIsEditing}><DatePicker selected={this.state.appdt} onChange={this.handleChangeAppdt} /></td>
             <td onClick={this.setIsEditing}><Dropdown options={this.options} onChange={this.handleChangeStatus} value={this.props.status} placeholder="Select a status" /></td>
