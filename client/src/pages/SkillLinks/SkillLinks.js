@@ -52,7 +52,8 @@ export default class SkillLinks extends React.Component {
         {this.state.skills.map(element =>
                     <SkillLinksRow onRefresh={this.getSkillLinks} key={element.skillid} {...element}/>
             )}
-            <SkillLinksAdd onRefresh={this.getSkillLinks}></SkillLinksAdd>
+                    <SkillLinksAdd onRefresh={this.getSkillLinks} skillList={this.state.skills.length > 0 ? this.state.skills[0].skillList : []}></SkillLinksAdd>
+			 
         </tbody>
       </table>
     </div>
