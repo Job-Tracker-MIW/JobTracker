@@ -38,15 +38,16 @@ def createAndSeedTables():
     sql = "CREATE TABLE Companies (companyid INT AUTO_INCREMENT PRIMARY KEY, company VARCHAR(50) NOT NULL) ENGINE=InnoDB AUTO_INCREMENT=1000;"
     mycursor.execute(sql)
 
+    #Do we need the contraint below?? It breaks the updating on status for applied jobs. 
+
+    # sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
+    # userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, job_status VARCHAR(50), skill VARCHAR(25) NOT NULL, companyid INT NOT NULL, CONSTRAINT job_name UNIQUE (companyid, title, name),\
+    # FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE, FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
+    # mycursor.execute(sql)
     sql = "CREATE TABLE Jobs (jobid INT AUTO_INCREMENT PRIMARY KEY,\
-    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, job_status VARCHAR(50), skill VARCHAR(25) NOT NULL, companyid INT NOT NULL, CONSTRAINT job_name UNIQUE (companyid, title, name),\
+    userid INT NOT NULL, name VARCHAR(50) NOT NULL, title VARCHAR(50) NOT NULL, job_status VARCHAR(50), skill VARCHAR(25) NOT NULL, companyid INT NOT NULL,\
     FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE, FOREIGN KEY(companyid) REFERENCES Companies(companyid) ON DELETE CASCADE)"
     mycursor.execute(sql)
-
-    # sql = "CREATE TABLE Applications (appid INT AUTO_INCREMENT PRIMARY KEY,\
-    # jobid INT NOT NULL, userid INT NOT NULL, name VARCHAR(50) NOT NULL, status VARCHAR(50) NOT NULL, application_date DATE NOT NULL,\
-    # FOREIGN KEY(jobid) REFERENCES Jobs(jobid) ON DELETE CASCADE, FOREIGN KEY(userid) REFERENCES Users(userid) ON DELETE CASCADE)"
-    # mycursor.execute(sql)
 
     sql = "CREATE TABLE Applications (appid INT AUTO_INCREMENT PRIMARY KEY,\
     jobid INT NOT NULL, userid INT NOT NULL, name VARCHAR(50) NOT NULL, status VARCHAR(50) NOT NULL, application_date VARCHAR(50) NOT NULL,\
@@ -366,14 +367,14 @@ def addToApplied(userid, application, curr_datetime):
         jobid = cur.fetchall()
         if len(jobid) > 0:
             jobid = jobid[0]['jobid']
-        else:
-            # we shouldn't need, should always have job in Jobs now.   
-            sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s)"
-            val = (int(userid), name, title, skill, int(companyid))
-            cur.execute(sql, val)
-            sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
-            cur.execute(sql, (title, companyid, name))
-            jobid = cur.fetchall()[0]['jobid']
+        # else:
+        #     # we shouldn't need, should always have job in Jobs now.   
+        #     sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s, %s)"
+        #     val = (int(userid), name, title, skill, int(companyid))
+        #     cur.execute(sql, val)
+        #     sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
+        #     cur.execute(sql, (title, companyid, name))
+        #     jobid = cur.fetchall()[0]['jobid']
 
 
 
@@ -660,8 +661,6 @@ def deleteCompany(company_attributes, userid):
     company_id = int(company_attributes["companyid"])
     job_id = int(company_attributes["jobid"])
     userDefName = company_attributes["userDefName"]
-    # print("COMPANY ID", company_id)
-    # print("JOB ID", job_id)
     
     sql = "DELETE FROM Jobs WHERE jobid = %s AND companyid = %s AND userid = %s and name = %s"
     val = (job_id, company_id, userid, userDefName)
@@ -817,9 +816,6 @@ def addContact(contact, userid):
     company_dict = contact["company"]
     company = company_dict['value']
 
-    # print("ADD NAME COMPANY", name)
-    # print("ADD CONTACT COMPANY", company_dict['value'])
-
     sql = "select companyid from Companies where company = %s"
 
     cur.execute(sql, (company,))
@@ -889,7 +885,6 @@ def updateSkill(skill, userid, skillid):
     val = (userid, name, prof, skillid)
     cur.execute(sql, val)
 
-
     mydb.commit()
     cur.close()
     mydb.close()
@@ -913,12 +908,9 @@ def updateContact(contact, userid, contactid):
     cur.execute(sql, (company,))
     companyid = cur.fetchall()[0]['companyid']
 
-
-
     sql = "UPDATE Contacts SET userid = %s, name = %s, companyid = %s, email = %s, phone = %s where contactid = %s"
     val = (userid, name, companyid, email, phone, contactid)
     cur.execute(sql, val)
-
 
     mydb.commit()
     cur.close()
@@ -935,6 +927,7 @@ def updateApplications(application, userid, appid):
     title = application["title"]
     company = application["company"]
     name = application["name"]
+
     try:  # there is an issue with the datepicker. Depending on where/when chaged status can be a dictionary or a nested dictionary 
           # the try except solves the issues, otherwise there will be an intermittent errro
        status = application["status"]['value']
@@ -942,33 +935,68 @@ def updateApplications(application, userid, appid):
        status = application["status"]
     appdt = application["appdt"] #parser.parse(str(application["appdt"]))
 
-    sql = "select companyid from Companies where company = %s"
-    cur.execute(sql, (company,))
+    # sql = "select companyid from Companies where company = %s"
+    # cur.execute(sql, (company,))
+    # companyid = cur.fetchall()
+    # if len(companyid) > 0:
+    #     companyid = companyid[0]['companyid']
+
+    sql = """SELECT Companies.companyid
+            FROM Jobs
+            INNER JOIN Companies ON Jobs.companyid = Companies.companyid
+            WHERE Companies.company = %s AND Jobs.title = %s
+    """
+    cur.execute(sql, (company, title))
     companyid = cur.fetchall()
     if len(companyid) > 0:
         companyid = companyid[0]['companyid']
 
+    print("COMPANYID", companyid)
 
-    sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
-    cur.execute(sql, (title, companyid, name))
-    jobid = cur.fetchall()
-    
-    if len(jobid) > 0:
-        jobid = jobid[0]['jobid']
-    else:
-        sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-        val = (int(userid), name, title, int(companyid))
-        cur.execute(sql, val)
-        sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
-        cur.execute(sql, (title, companyid, name))
-        jobid = cur.fetchall()[0]['jobid']
+    # sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
+    sql = """SELECT Jobs.jobid, Jobs.skill
+            From Jobs 
+            WHERE Jobs.title = %s AND Jobs.companyid = %s"""
+    cur.execute(sql, (title, companyid))
+    val = cur.fetchall()
+    jobid = val[0]['jobid']
+    skill = val[0]['skill']
+ 
+    # if len(jobid) > 0:
+    #     jobid = jobid[0]['jobid']
+    # else:
+    #     sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
+    #     val = (int(userid), name, title, int(companyid))
+    #     cur.execute(sql, val)
+    #     sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
+    #     cur.execute(sql, (title, companyid, name))
+    #     jobid = cur.fetchall()[0]['jobid']
 
+    # sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
+    # cur.execute(sql, (title, companyid, name))
+    # #jobid = cur.fetchall()[0]['jobid']
+    # vals = cur.fetchall()
+    # print("VALLS", vals)
 
+    # sql = """SELECT Jobs.jobid 
+    #         FROM Jobs 
+    #         WHERE Jobs.companyid = %s"""
+    # val = (companyid)
+    # cur.execute(sql, val)
+    # #jobid = cur.fetchall()[0]['jobid']
+    # vals = cur.fetchall()
+    # print("VALLS", vals)
+
+    # Update Applications
     sql = "UPDATE Applications SET jobid = %s, userid = %s, name = %s, status = %s, application_date = %s where appid = %s"
     #val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day), int(appid))
     val = (int(jobid), int(userid), name, status, appdt, int(appid))
     cur.execute(sql, val)
 
+    # Update Jobs
+    sql = "UPDATE Jobs SET userid = %s, name = %s, title = %s, skill = %s, companyid = %s, job_status = %s WHERE jobid = %s"
+    val = (int(userid), name, title, skill, int(companyid), status, int(jobid))
+    cur.execute(sql, val)
 
     mydb.commit()
     cur.close()
