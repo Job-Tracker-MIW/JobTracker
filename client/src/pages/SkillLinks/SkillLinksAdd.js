@@ -12,7 +12,7 @@ export default class SkillLinksAdd extends React.Component {
             skill: this.props.skill,
             reslabel: this.props.reslabel,
             reslink: this.props.reslink,
-            skillList: this.props.skillList
+            skillList: this.props.skillList		
 	}
 
     }
@@ -20,7 +20,7 @@ export default class SkillLinksAdd extends React.Component {
 
 
     handleChangeSkill = (e) => {
-        this.setState({ skill: e.value});
+        this.setState({ skill: e});
     }
 
     handleChangeResLabel = (e) => {
@@ -30,7 +30,7 @@ export default class SkillLinksAdd extends React.Component {
     handleChangeResLink = (e) => {
         this.setState({ reslink: e.target.value});
     }
-    options = ['C++', 'Javascript', 'Python']
+	//options = ['C++', 'Javascript', 'Python']
 
 
 
@@ -63,7 +63,7 @@ export default class SkillLinksAdd extends React.Component {
     render() {
         return <tr>
             <button onClick={this.setIsAdding} className={this.state.isAdding?  'hidden' : undefined}>Add</button>
-           <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><Dropdown options={this.options} onChange={this.handleChangeSkill.bind(this)} placeholder="Select a skill" /></td> 
+            <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><Dropdown options={this.props.skillList} onChange={this.handleChangeSkill} value={this.props.skill} placeholder="Select a Skill"/></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeResLabel.bind(this)} /></td>
             <td onClick={this.setIsEditing} className={!this.state.isAdding?  'hidden' : undefined}><input type="text" onChange={this.handleChangeResLink.bind(this)} /></td>
             <td className={!this.state.isAdding?  'hidden' : undefined}></td>

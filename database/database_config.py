@@ -344,6 +344,7 @@ def addToApplied(userid, application, curr_datetime):
     company = application["company"]
     name = application["userDefName"]
     
+
     if 'status' in application.keys():
         status = application["status"]
     else: status = 'Applied'
@@ -366,8 +367,9 @@ def addToApplied(userid, application, curr_datetime):
         if len(jobid) > 0:
             jobid = jobid[0]['jobid']
         else:
-            sql = "INSERT INTO Jobs (userid, name, title, companyid) VALUES (%s, %s, %s, %s)"
-            val = (int(userid), name, title, int(companyid))
+            # we shouldn't need, should always have job in Jobs now.   
+            sql = "INSERT INTO Jobs (userid, name, title, skill, companyid) VALUES (%s, %s, %s, %s)"
+            val = (int(userid), name, title, skill, int(companyid))
             cur.execute(sql, val)
             sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
             cur.execute(sql, (title, companyid, name))
@@ -496,7 +498,10 @@ def addSkillLink(link):
     mydb = mysql.connector.connect(**config)
     cur = mydb.cursor(dictionary=True)
 
-    skill = link["skill"]
+    try: # this error again
+        skill = link["skill"]['value']
+    except:
+        skill = link["skill"]
 
     sql = "select skillid from Skills where name = %s"
     cur.execute(sql, (skill,))
@@ -609,13 +614,12 @@ def addCompany(company_attributes, userid):
     cur.execute(sql, val)
     mydb.commit()
 
-    getcompanyid = """SELECT Companies.companyid 
-                FROM Companies 
-                ORDER BY Companies.companyid 
-                DESC LIMIT 1;"""
-    cur.execute(getcompanyid)
-    vals = cur.fetchone()
-    companyid = int(vals['companyid'])
+
+    sql = "select companyid from Companies where company = %s"
+    cur.execute(sql, (company,))
+    companyid = cur.fetchall()
+    if len(companyid) > 0:
+        companyid = companyid[0]['companyid']
 
     job_status = 'Not Applied'
 
@@ -632,7 +636,7 @@ def addCompany(company_attributes, userid):
     if len(skillMatches) > 0:
         skillMatch = skillMatches[0]["skillid"]
 
-    sql = "SELECT jobid FROM Jobs where jobs.skill = %s"
+    sql = "SELECT jobid FROM Jobs where Jobs.skill = %s"
     val = (skill,)
     cur.execute(sql,val)
     jobMatches = cur.fetchall()
@@ -688,24 +692,50 @@ def updateCompany(company_update_info, companyid):
     jobid = company_update_info["jobid"]
 
     # Update Company w/PUT
-    sql = """UPDATE Companies SET company = %s 
+    sql = """UPDATE Companies SET company = %s
             WHERE Companies.companyid = %s"""
 
     val = (company_name, companyid)
     cur.execute(sql, val)
 
     # Update Jobs w/PUT
-    sql = """UPDATE Jobs SET title = %s, name = %s, skill = %s 
+    sql = """UPDATE Jobs SET title = %s, name = %s, skill = %s
         WHERE Jobs.jobid = %s"""
 
     val = (title, userDefName, skill, jobid)
     cur.execute(sql, val)
 
+    # check for matching skill and add to JobsSkills if so
+    sql = "SELECT skillid FROM Skills where name = %s"
+    val = (skill,)
+    cur.execute(sql,val)
+    skillMatches = cur.fetchall()
+    if len(skillMatches) > 0:
+        skillMatch = skillMatches[0]["skillid"]
+
+    sql = "SELECT jobid FROM Jobs where Jobs.skill = %s"
+    val = (skill,)
+    cur.execute(sql,val)
+    jobMatches = cur.fetchall()
+    if len(jobMatches) > 0:
+        jobMatch = jobMatches[0]["jobid"]
+
+    if len(jobMatches) > 0 and len(skillMatches) > 0:
+        sql = "INSERT INTO JobsSkills (skillid, jobid) VALUES (%s, %s)"
+        vals = (int(skillMatch), int(jobMatch))
+        cur.execute(sql, vals)
+        mydb.commit()
+
+
+
     mydb.commit()
     cur.close()
     mydb.close()
-    
+
     return True
+
+
+
 
 def updateJobApplied(userid, applied_attributes):
     mydb = mysql.connector.connect(**config)
@@ -752,7 +782,7 @@ def getTableSkills(userid):
     cur = mydb.cursor(dictionary=True)
 
     sql = "select a.skillid, a.name as skill, a.proficiency as pro, b.jobMatch FROM Skills a LEFT JOIN " +\
-          "(SELECT count(*) as jobMatch, skillid from JobsSkills GROUP BY skillid ) b ON a.skillid = b.skillid WHERE a.userid = %s"
+          "(SELECT count(*) as jobMatch, skill from Jobs GROUP BY skill ) b ON a.name = b.skill WHERE a.userid = %s"
 
     cur.execute(sql, (userid,))
 
@@ -871,12 +901,22 @@ def updateContact(contact, userid, contactid):
     cur = mydb.cursor(dictionary=True)
 
     name = contact["name"]
-    #companyid = contact["companyid"]
+    try:  # this error again 
+        company = contact["company"]['value']
+    except:
+        company = contact["company"]
+
     email = contact["email"]
     phone = contact["phone"]
 
-    sql = "UPDATE Contacts SET userid = %s, name = %s, email = %s, phone = %s where contactid = %s"
-    val = (userid, name, email, phone, contactid)
+    sql = "select companyid from Companies where company = %s"
+    cur.execute(sql, (company,))
+    companyid = cur.fetchall()[0]['companyid']
+
+
+
+    sql = "UPDATE Contacts SET userid = %s, name = %s, companyid = %s, email = %s, phone = %s where contactid = %s"
+    val = (userid, name, companyid, email, phone, contactid)
     cur.execute(sql, val)
 
 
@@ -895,12 +935,19 @@ def updateApplications(application, userid, appid):
     title = application["title"]
     company = application["company"]
     name = application["name"]
-    status = application["status"]
-    appdt = parser.parse(application["appdt"])
+    try:  # there is an issue with the datepicker. Depending on where/when chaged status can be a dictionary or a nested dictionary 
+          # the try except solves the issues, otherwise there will be an intermittent errro
+       status = application["status"]['value']
+    except:
+       status = application["status"]
+    appdt = application["appdt"] #parser.parse(str(application["appdt"]))
 
     sql = "select companyid from Companies where company = %s"
     cur.execute(sql, (company,))
-    companyid = cur.fetchall()[0]['companyid']
+    companyid = cur.fetchall()
+    if len(companyid) > 0:
+        companyid = companyid[0]['companyid']
+
 
     sql = "select jobid from Jobs where title = %s and companyid = %s and name = %s"
     cur.execute(sql, (title, companyid, name))
@@ -918,7 +965,8 @@ def updateApplications(application, userid, appid):
 
 
     sql = "UPDATE Applications SET jobid = %s, userid = %s, name = %s, status = %s, application_date = %s where appid = %s"
-    val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day), int(appid))
+    #val = (int(jobid), int(userid), name, status, datetime.date(appdt.year,appdt.month,appdt.day), int(appid))
+    val = (int(jobid), int(userid), name, status, appdt, int(appid))
     cur.execute(sql, val)
 
 
